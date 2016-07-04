@@ -6,6 +6,6 @@ Voltage fit package
 
 Experimental package for fitting voltage curves. Authors:
 
--   Gavin Whittaker
+-   Gavin Whitaker
 -   Colin Gillespie
 -   Andrew Golightly
