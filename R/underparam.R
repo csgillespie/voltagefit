@@ -18,12 +18,12 @@ underparam = function(wafer,fitted)
   m=lm(cbind(X1,X2,X3,X4,X5,X6) ~ factor(w)+factor(n), data=theta$forward)
   vmat=vcov(m)
   
-  loc=NULL
+  loc=numeric(6)
   for(i in 1:6)
   {
-    loc = c(loc,1+(i-1)*(length(unique(wafer$test_date))+length(unique(wafer$name)))-(i-1)) 
+    loc[i] = 1+(i-1)*(length(unique(wafer$test_date))+length(unique(wafer$name)))-(i-1) 
   }
-  
+
   t_vmat=matrix(0,ncol=6,nrow=6)
   for(i in 1:6)
   {
@@ -43,12 +43,6 @@ underparam = function(wafer,fitted)
   m=lm(cbind(X1,X2,X3,X4,X5,X6) ~ factor(w)+factor(n), data=theta$backward)
   vmat=vcov(m)
   
-  loc=NULL
-  for(i in 1:6)
-  {
-    loc = c(loc,1+(i-1)*(length(unique(wafer$test_date))+length(unique(wafer$name)))-(i-1)) 
-  }
-  
   t_vmat=matrix(0,ncol=6,nrow=6)
   for(i in 1:6)
   {
@@ -57,4 +51,18 @@ underparam = function(wafer,fitted)
   backward = list(param = t_all,var = t_vmat)
   
   return(list(forward=forward,backward=backward))
+}
+
+
+## function to create sample used for underlying curves
+##
+## underparam is of the form, underparam
+## n is the number of samples required
+
+undercurvesim = function(underparam,n=1000)
+{
+  t_f_sim=mvrnorm(n,underparam$forward$param,underparam$forward$var)
+  t_b_sim=mvrnorm(n,underparam$backward$param,underparam$backward$var)
+
+  return(list(forward=t_f_sim,backward=t_b_sim))
 }
