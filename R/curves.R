@@ -1,12 +1,13 @@
 ## function to create curves for each week
 ##
-## weekp is of the form, weekparam, tot_obs is the 
-## total number of observations made on each device within a wafer 
-## (default=241), tot_f is the total number of observations made in 
+## weekp is of the form, weekparam, tot_f is the total number of observations made in 
 ## the forward pass on each device within a wafer (default=193)
 
-weekcurve = function(wafer,weekp,tot_obs=241,tot_f=193)
+weekcurve = function(wafer,weekp,tot_f=193)
 {
+  tot_obs = length(subset(subset(wafer, wafer_id %in% unique(wafer$wafer_id)[1]),
+                                   name %in% unique(wafer$name)[1])$VG)
+
   v_f=wafer$VG[1:tot_f]
   v_b=wafer$VG[tot_f:tot_obs]
   
@@ -28,14 +29,15 @@ weekcurve = function(wafer,weekp,tot_obs=241,tot_f=193)
 
 ## function to create underlying forward curve
 ##
-## underp is of the form, undercurvesim
-## tot_obs is the total number of observations made 
-## on each device within a wafer (default=241), tot_f is the total 
+## underp is of the form, undercurvesim, tot_f is the total 
 ## number of observations made in the forward pass on each device 
 ## within a wafer (default=193)
 
-undercurve = function(wafer,underp,tot_obs=241,tot_f=193)
+undercurve = function(wafer,underp,tot_f=193)
 {
+  tot_obs = length(subset(subset(wafer, wafer_id %in% unique(wafer$wafer_id)[1]),
+                                   name %in% unique(wafer$name)[1])$VG)
+
   v_f=wafer$VG[1:tot_f]
   v_b=wafer$VG[tot_f:tot_obs]
 

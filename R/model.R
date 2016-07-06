@@ -1,14 +1,16 @@
 ## function to fit logcurve to the wafer, getting parameters and cost
 ## wafer is the data to fit to, lim is the max number of iterations to 
-## use in nlm (default=2000), tot_obs is the total number of 
-## observations made on each device within a wafer (default=241), 
+## use in nlm (default=2000), 
 ## tot_f is the total number of observations made in the forward pass 
 ## on each device within a wafer (default=193)
 ##
 ## the function returns a list with elements parameters and cost
 
-fitwafer = function(wafer,lim=2000,tot_obs=241,tot_f=193)
+fitwafer = function(wafer,lim=2000,tot_f=193)
 {
+  tot_obs = length(subset(subset(wafer, wafer_id %in% unique(wafer$wafer_id)[1]),
+                                   name %in% unique(wafer$name)[1])$VG)
+
   estf=matrix(0,nrow=dim(wafer)[1]/tot_obs,ncol=6)
   estb=matrix(0,nrow=dim(wafer)[1]/tot_obs,ncol=6)
   

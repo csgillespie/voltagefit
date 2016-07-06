@@ -1,11 +1,13 @@
 ## function to create a parameter matrix, adding week, wafer, device 
-## to the respective parameter values, tot_obs is the total number of 
-## observations made on each device within a wafer (default=241)
+## to the respective parameter values
 ##
 ## fited is of the form, fitwafer
 
-thetasetup = function(wafer,fited,tot_obs=241)
+thetasetup = function(wafer,fited)
 {
+  tot_obs = length(subset(subset(wafer, wafer_id %in% unique(wafer$wafer_id)[1]),
+                                   name %in% unique(wafer$name)[1])$VG)
+
   l = numeric(length(unique(wafer$test_date)))
   for(i in 1:length(unique(wafer$test_date)))
   {

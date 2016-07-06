@@ -1,10 +1,9 @@
 ## function to create underlying parameters
-## fited is of the form, fitwafer, tot_obs is the total number of 
-## observations made on each device within a wafer (default=241), 
+## fited is of the form, fitwafer
 
-underparam = function(wafer,fitted,tot_obs=241)
+underparam = function(wafer,fitted)
 {
-  theta = thetasetup(wafer,fitted,tot_obs)
+  theta = thetasetup(wafer,fitted)
   
   options(contrasts=c("contr.sum","contr.sum"))
   man = manova(cbind(X1,X2,X3,X4,X5,X6) ~ factor(w)+factor(n), data=theta$forward,weights=1/fitted$forward$cost) 
