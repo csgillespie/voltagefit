@@ -49,13 +49,15 @@ plotweek = function(wafer, curves, orig=TRUE, tot_f=193)
 ## orig is whether the plot should be on the original data scale or 
 ## the transformed scale, default is the original scale
 ## med is whether the mean or the median should be used, the default 
-## is the mean curve, tot_obs is the total number of observations made 
-## on each device within a wafer (default=241), tot_f is the total 
+## is the mean curve, tot_f is the total 
 ## number of observations made in the forward pass on each device 
 ## within a wafer (default=193)
 
-plotunder = function(wafer,curves,orig=T,med=F,tot_obs=241,tot_f=193)
+plotunder = function(wafer,curves,orig=T,med=F,tot_f=193)
 {
+  tot_obs = length(subset(subset(wafer, wafer_id %in% unique(wafer$wafer_id)[1]),
+                                   name %in% unique(wafer$name)[1])$VG)
+
   v_f=wafer$VG[1:tot_f]
   v_b=wafer$VG[tot_f:tot_obs]
   
