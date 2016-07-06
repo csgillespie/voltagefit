@@ -20,11 +20,11 @@ fitwafer = function(wafer,lim=2000,tot_obs=241,tot_f=193)
   for(j in unique(wafer$test_date))
   {
     dd_temp = subset(wafer, test_date %in% c(j))
-    cat("test_date",j,"\n")
+    message("test_date: ",j,"\n")
     for(k in unique(dd_temp$wafer_id))
     {  
       dd = subset(dd_temp, wafer_id %in% c(k))
-      cat("wafer",k,"\n")
+      message("wafer: ",k,"\n")
       for(i in unique(dd$name))
       {
         place = place+1
@@ -40,7 +40,7 @@ fitwafer = function(wafer,lim=2000,tot_obs=241,tot_f=193)
         estf[place,] = m.nlmf$estimate
         if(m.nlmf$iterations==lim) print(paste("Max reached for forward, device ",j,".",k,".",i))
         minf[place] = minlogcurve(m.nlmf$estimate,d_forward$VG,
-												max(log(abs(d_forward$ID)))/log(abs(d_forward$ID)))
+                                  max(log(abs(d_forward$ID)))/log(abs(d_forward$ID)))
         
         #backwards
         m.nlmb = nlm(minlogcurveb,c(0.01,0.01,0.01,0.01,0.01,0.01),d_backward$VG,
@@ -49,7 +49,7 @@ fitwafer = function(wafer,lim=2000,tot_obs=241,tot_f=193)
         estb[place,] = m.nlmb$estimate
         if(m.nlmb$iterations==lim) print(paste("Max reached for backward, device ",j,".",k,".",i))
         minb[place] = minlogcurveb(m.nlmb$estimate,d_backward$VG,
-												max(log(abs(d_backward$ID)))/log(abs(d_backward$ID)),m.nlmf$estimate)
+                                   max(log(abs(d_backward$ID)))/log(abs(d_backward$ID)),m.nlmf$estimate)
       }
     }
   }
