@@ -1,9 +1,10 @@
 ## function to get parameters to create curves for each week
-## fited is of the form, fitwafer
+## fited is of the form, fitwafer, tot_obs is the total number of 
+## observations made on each device within a wafer (default=241)
 
-weekparam = function(wafer,fitted)
+weekparam = function(wafer,fitted,tot_obs=241)
 {
-  theta = thetasetup(wafer,fitted)
+  theta = thetasetup(wafer,fitted,tot_obs)
   
   options(contrasts=c("contr.sum","contr.sum"))
   man = manova(cbind(X1,X2,X3,X4,X5,X6) ~ factor(w)+factor(n), data=theta$forward,weights=1/fitted$forward$cost) 
