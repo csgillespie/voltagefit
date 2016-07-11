@@ -18,7 +18,8 @@ minlogcurve = function(x,datax,datay)
 ## logcurveb is the function for the backwards curve
 logcurveb = function(x,paramf,paramb)
 {
-  paramf[1]+paramb[1]+(paramf[2]+paramb[2]-(paramf[1]+paramb[1]))/(1+exp(paramf[3]+paramb[3]+(paramf[4]+paramb[4])*x+(paramf[5]+paramb[5])*x^2+(paramf[6]+paramb[6])*x^3))
+  logcurve(x,paramf+paramb)
+  #paramf[1]+paramb[1]+(paramf[2]+paramb[2]-(paramf[1]+paramb[1]))/(1+exp(paramf[3]+paramb[3]+(paramf[4]+paramb[4])*x+(paramf[5]+paramb[5])*x^2+(paramf[6]+paramb[6])*x^3))
 }
 
 ## minlogcurveb is the function to be minimised by nlm to fit forward logcurve
