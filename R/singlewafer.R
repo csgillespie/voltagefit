@@ -55,6 +55,7 @@ fitwafer = function(wafer,lim=2000,tot_f=193)
 ## on each device within a wafer (default=193)
 ##
 ## the function returns a list with elements parameters and cost
+## each wafer should be suitably filtered and formated before been fed in
 
 fitall = function(path,lim=2000,tot_f=193)
 {
@@ -69,7 +70,6 @@ fitall = function(path,lim=2000,tot_f=193)
   for(i in 1:length(files))
   {
     dat1 <- readRDS(files[i]) 
-    df <- cSplit(dat1, c("VG", "ID"), sep = ",", "long") #think about this line as may not come like this
 
     for(j in unique(df$wafer_id))
     {
