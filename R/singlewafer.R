@@ -59,25 +59,30 @@ fitwafer = function(wafer,lim=2000,tot_f=193)
 fitall = function(path,lim=2000,tot_f=193)
 {
   files = list.files(path = path, pattern = ".rds")
-  message("files read: ",files)
+  message("files read: ",paste(files,collapse=" "))
+
   estf = NULL
-  estb = NULL
-  
+  estb = NULL  
   minf = NULL
   minb = NULL
   
   for(i in 1:length(files))
   {
     dat1 <- readRDS(files[i]) 
-    df <- cSplit(dat1, c("VG", "ID"), sep = ",", "long")
-    df$test_date= paste("week",i)
-    df = filtered(df,241)
+    df <- cSplit(dat1, c("VG", "ID"), sep = ",", "long") #think about this line as may not come like this
 
     for(j in unique(df$wafer_id))
     {
       wafer = subset(df, wafer_id %in% c(j))
       message("wafer: ",j)
       temp = fitwafer(wafer,lim,tot_f)
+      
+      temp1 = cbind(w=rep(i,length(temp$forward$cost)),
+                    w_id=rep(j,length(temp$forward$cost)),
+                    n=unique(wafer$name))
+      
+      temp$forward$parameters = data.frame(temp1,temp$forward$parameters)
+      temp$backward$parameters = data.frame(temp1,temp$backward$parameters)
       
       estf = rbind(estf,temp$forward$parameters)
       estb = rbind(estb,temp$backward$parameters)
