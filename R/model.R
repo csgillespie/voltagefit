@@ -22,11 +22,11 @@ fitwafer = function(wafer,lim=2000,tot_f=193)
   for(j in unique(wafer$test_date))
   {
     dd_temp = subset(wafer, test_date %in% c(j))
-    message("test_date: ",j,"\n")
+    message("test_date: ",j)
     for(k in unique(dd_temp$wafer_id))
     {  
       dd = subset(dd_temp, wafer_id %in% c(k))
-      message("wafer: ",k,"\n")
+      message("wafer: ",k)
       for(i in unique(dd$name))
       {
         place = place+1
