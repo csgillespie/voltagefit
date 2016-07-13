@@ -32,7 +32,7 @@ minlogcurveb = function(x,datax,datay,paramf)
 }
 
 ## residual creates the residuals 
-residual = function(pred,x)
-{
-  x-pred
-}
+#residual = function(pred,x)
+#{
+#  x-pred
+#}
