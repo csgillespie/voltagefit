@@ -65,22 +65,26 @@ fitall = function(path,lim=2000)
   files = list.files(path = path, pattern = ".rds")
   message("files read: ",paste(files,collapse=" "))
   
-  estf = NULL
-  estb = NULL  
-  minf = NULL
-  minb = NULL
-  
   for(i in 1:length(files))
   {
     wafer = readRDS(paste(path,files[i],sep="")) 
     message("wafer: ",files[i])
     temp = fitwafer(wafer,lim,files[i])
     
-    estf = rbind(estf,temp$forward$parameters)
-    estb = rbind(estb,temp$backward$parameters)
-    minf = rbind(minf,temp$forward$cost)
-    minb = rbind(minb,temp$backward$cost)
-
+    if(i==1)
+    {
+      estf = temp$forward$parameters
+      estb = temp$backward$parameters
+      minf = temp$forward$cost
+      minb = temp$backward$cost
+    }
+    else
+    {
+      estf = rbind(estf,temp$forward$parameters)
+      estb = rbind(estb,temp$backward$parameters)
+      minf = rbind(minf,temp$forward$cost)
+      minb = rbind(minb,temp$backward$cost)
+    }
   }
   return(list(forward=list(parameters=estf,cost=minf),backward=list(parameters=estb,cost=minb)))
 }
