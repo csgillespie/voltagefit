@@ -2,24 +2,25 @@
 
 ## function to plot curves for each week
 ##
+## fitall is of the form, fitall
 ## curves is of the form, weekcurve, 
+## fm is of the form, fitmanova
 ## orig is whether the plot should be on the original data scale or 
 ## the transformed scale, default is the original scale, 
-## tot_f is the total number of observations made in 
-## the forward pass on each device within a wafer (default=193)
+## v is the voltage gate measurements (for one device) to be plotted against
 
-plotweek = function(wafer, curves, orig=TRUE, tot_f=193)
+plotweek = function(fitall, curves, fm, orig=TRUE, v)
 {
-  tot_obs = length(subset(subset(wafer, wafer_id %in% unique(wafer$wafer_id)[1]),
-                                   name %in% unique(wafer$name)[1])$VG)
-  v_f=wafer$VG[1:tot_f]
-  v_b=wafer$VG[tot_f:tot_obs]
+  tot_f = which(diff(v)<0)[1]
+  
+  v_f=v[1:tot_f]
+  v_b=v[tot_f:length(v)]
   
   op = par(mar=c(3,3,2,1), mgp=c(2,0.4,0), tck=-.01,cex.axis=0.9, las=1)
   on.exit(op)
   
   if(orig) {
-    m = max(log(abs(wafer$ID)))
+    m = max(fitall$forward$parameters$max)
     curves$forward = exp(m/curves$forward)
     curves$backward = exp(m/curves$backward)
   }
@@ -37,8 +38,8 @@ plotweek = function(wafer, curves, orig=TRUE, tot_f=193)
     lines(v_b, curves$backward[i,], col=i, lty=2)
   }
   
-  temp = paste(unique(wafer$test_date))
-  legend("topleft", temp,col=1:length(unique(wafer$test_date)), lty=1)
+  temp = paste(unique(fm$weight$forward$xlevels$`factor(week)`))
+  legend("topleft", temp,col=1:length(unique(fm$weight$forward$xlevels$`factor(week)`)), lty=1)
   legend("bottomright", c("Forwards","Backwards"), col=1, lty=1:2)
 }
 
