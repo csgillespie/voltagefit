@@ -1,5 +1,3 @@
-# plotting functions 
-
 ## function to plot curves for each week
 ##
 ## fitall is of the form, fitall
@@ -19,7 +17,8 @@ plotweek = function(fitall, curves, fm, orig=TRUE, v)
   op = par(mar=c(3,3,2,1), mgp=c(2,0.4,0), tck=-.01,cex.axis=0.9, las=1)
   on.exit(op)
   
-  if(orig) {
+  if(orig) 
+  {
     m = max(fitall$forward$parameters$max)
     curves$forward = exp(m/curves$forward)
     curves$backward = exp(m/curves$backward)
@@ -28,13 +27,11 @@ plotweek = function(fitall, curves, fm, orig=TRUE, v)
   
   plot(v_f,curves$forward[1,],type="l",xlab="Vg (V)",ylab="Id (A)",log="y", 
        ylim=limits,
-       main=ifelse(orig, "", "Transformed scale"), panel.first=grid())
+       main=ifelse(orig, "", "Transformed scale"), panel.first=grid(),col="white")
   
-  for(i in 2:nrow(curves$forward)) {
+  for(i in 1:nrow(curves$forward)) 
+  {
     lines(v_f, curves$forward[i,], col=i)
-  }
-  
-  for(i in 1:nrow(curves$backward)) {
     lines(v_b, curves$backward[i,], col=i, lty=2)
   }
   
@@ -46,104 +43,62 @@ plotweek = function(fitall, curves, fm, orig=TRUE, v)
 
 ## function to create underlying forward curve
 ##
-## curves is of the form, undercurve
+## fitall is of the form, fitall
+## curves is of the form, undercurve, 
 ## orig is whether the plot should be on the original data scale or 
-## the transformed scale, default is the original scale
+## the transformed scale, default is the original scale, 
 ## med is whether the mean or the median should be used, the default 
-## is the mean curve, tot_f is the total 
-## number of observations made in the forward pass on each device 
-## within a wafer (default=193)
+## is the mean curve,
+## v is the voltage gate measurements (for one device) to be plotted against
 
-plotunder = function(wafer,curves,orig=T,med=F,tot_f=193)
+## N.B. using the mean with low levels of data can lead to splurious curves, 
+## the median appears to be more stable!
+
+plotunder = function(fitall, curves, orig=T, med=F, v)
 {
-  tot_obs = length(subset(subset(wafer, wafer_id %in% unique(wafer$wafer_id)[1]),
-                                   name %in% unique(wafer$name)[1])$VG)
-
-  v_f=wafer$VG[1:tot_f]
-  v_b=wafer$VG[tot_f:tot_obs]
+  tot_f = which(diff(v)<0)[1]
   
-  if(orig==F)
+  v_f=v[1:tot_f]
+  v_b=v[tot_f:length(v)]
+  
+  op = par(mar=c(3,3,2,1), mgp=c(2,0.4,0), tck=-.01,cex.axis=0.9, las=1)
+  on.exit(op)
+  
+  if(orig)
   {
-    if(med==F)
-    {
-      means_f=colMeans(curves$forward)
-    }
-    else
-    {
-      means_f=colQuantiles(curves$forward,probs=0.5)
-    }
-    lower_f=colQuantiles(curves$forward,probs=0.025)
-    upper_f=colQuantiles(curves$forward,probs=0.975)
-    
-    if(med==F)
-    {
-      means_b=colMeans(curves$backward)
-    }
-    else
-    {
-      means_b=colQuantiles(curves$backward,probs=0.5)
-    }
-    lower_b=colQuantiles(curves$backward,probs=0.025)
-    upper_b=colQuantiles(curves$backward,probs=0.975)
-
-    par(mar=c(3,3,2,1), mgp=c(2,0.4,0), tck=-.01,cex.axis=0.9, las=1)
-    plot(v_f,means_f,type="l",ylim=c(0.3,1.1),log="y",main="Transformed scale",xlab="Vg (V)",ylab="Id (A)")
-    grid()
-    lines(v_f,lower_f,lty=2)
-    lines(v_f,upper_f,lty=2)
-    lines(v_b,means_b,col=2)
-    lines(v_b,lower_b,lty=2,col=2)
-    lines(v_b,upper_b,lty=2,col=2)
-    if(med==F)
-    {
-      legend("topleft",c("Mean","95% Interval"),col=c(1,1),lty=c(1,2))
-    }
-    else
-    {
-      legend("topleft",c("Median","95% Interval"),col=c(1,1),lty=c(1,2))
-    }
+    m = max(fitall$forward$parameters$max)
+    curves$forward = exp(m/curves$forward)
+    curves$backward = exp(m/curves$backward)
+  }
+  limits = range(curves$backward, curves$forward)
+  
+  if(med)
+  {
+    means_f=colQuantiles(curves$forward,probs=0.5)
+    means_b=colQuantiles(curves$backward,probs=0.5)
+    temp = c("Median","95% Interval")
   }
   else
   {
-    m = max(log(abs(wafer$ID)))
-    
-    if(med==F)
-    {
-      means_f=colMeans(exp(m/curves$forward))
-    }
-    else
-    {
-      means_f=colQuantiles(exp(m/curves$forward),probs=0.5)
-    }
-    lower_f=colQuantiles(exp(m/curves$forward),probs=0.025)
-    upper_f=colQuantiles(exp(m/curves$forward),probs=0.975)
-    
-    if(med==F)
-    {
-      means_b=colMeans(exp(m/curves$backward))
-    }
-    else
-    {
-      means_b=colQuantiles(exp(m/curves$backward),probs=0.5)
-    }
-    lower_b=colQuantiles(exp(m/curves$backward),probs=0.025)
-    upper_b=colQuantiles(exp(m/curves$backward),probs=0.975)
-    
-    par(mar=c(3,3,2,1), mgp=c(2,0.4,0), tck=-.01,cex.axis=0.9, las=1)
-    plot(v_f,means_f,type="l",ylim=c(2e-11,1e-03),log="y",main="",xlab="Vg (V)",ylab="Id (A)")
-    grid()
-    lines(v_f,lower_f,lty=2)
-    lines(v_f,upper_f,lty=2)
-    lines(v_b,means_b,col=2)
-    lines(v_b,lower_b,lty=2,col=2)
-    lines(v_b,upper_b,lty=2,col=2)
-    if(med==F)
-    {
-      legend("topleft",c("Mean","95% Interval"),col=c(1,1),lty=c(1,2))
-    }
-    else
-    {
-      legend("topleft",c("Median","95% Interval"),col=c(1,1),lty=c(1,2))
-    }
+    means_f=colMeans(curves$forward)
+    means_b=colMeans(curves$backward)
+    temp = c("Mean","95% Interval")
   }
+  
+  lower_f=colQuantiles(curves$forward,probs=0.025)
+  upper_f=colQuantiles(curves$forward,probs=0.975)
+  lower_b=colQuantiles(curves$backward,probs=0.025)
+  upper_b=colQuantiles(curves$backward,probs=0.975)
+
+  plot(v_f,means_f,type="l",xlab="Vg (V)",ylab="Id (A)",log="y", 
+       ylim=limits,
+       main=ifelse(orig, "", "Transformed scale"), panel.first=grid())
+  lines(v_f,lower_f,lty=2)
+  lines(v_f,upper_f,lty=2)
+  lines(v_b,means_b,col=2)
+  lines(v_b,lower_b,lty=2,col=2)
+  lines(v_b,upper_b,lty=2,col=2)
+  
+  legend("topleft", temp,col=1, lty=1:2)
+  legend("bottomright", c("Forwards","Backwards"), col=1:2, lty=1)
 }

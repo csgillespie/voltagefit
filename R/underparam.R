@@ -1,58 +1,31 @@
 ## function to create underlying parameters
-## fited is of the form, fitwafer
+## fm is of the form, fitmanova
 
-underparam = function(wafer,fitted)
+underparam = function(fm)
 {
-  theta = thetasetup(wafer,fitted)
+  t_all_f = fm$weight$forward$coefficients[1,] 
+  vmat_f = vcov(fm$noweight$forward)
   
-  options(contrasts=c("contr.sum","contr.sum"))
-  man = manova(cbind(X1,X2,X3,X4,X5,X6) ~ factor(w)+factor(n), data=theta$forward,weights=1/fitted$forward$cost) 
-  
-  t_all=c(man$coefficients[1,1],
-          man$coefficients[1,2],
-          man$coefficients[1,3],
-          man$coefficients[1,4],
-          man$coefficients[1,5],
-          man$coefficients[1,6])
-  
-  m=lm(cbind(X1,X2,X3,X4,X5,X6) ~ factor(w)+factor(n), data=theta$forward)
-  vmat=vcov(m)
+  t_all_b = fm$weight$backward$coefficients[1,]
+  vmat_b = vcov(fm$noweight$backward)
   
   loc=numeric(6)
   for(i in 1:6)
   {
-    loc[i] = 1+(i-1)*(length(unique(wafer$test_date))+length(unique(wafer$name)))-(i-1) 
+    loc[i] = 1+(i-1)*(length(fm$weight$forward$xlevels$`factor(week)`)+length(fm$weight$forward$xlevels$`factor(name)`))-(i-1) 
   }
+  
+  t_vmat_f = matrix(0,ncol=6,nrow=6)
+  t_vmat_b = t_vmat_f
+  
+  for(i in 1:6)
+  {
+    t_vmat_f[i,] = vmat_f[loc[i],loc]
+    t_vmat_b[i,] = vmat_b[loc[i],loc]
+  }  
 
-  t_vmat=matrix(0,ncol=6,nrow=6)
-  for(i in 1:6)
-  {
-    t_vmat[i,]=vmat[loc[i],loc]
-  }  
-  forward = list(param = t_all,var = t_vmat)
-  
-  man = manova(cbind(X1,X2,X3,X4,X5,X6) ~ factor(w)+factor(n), data=theta$backward,weights=1/fitted$forward$cost) 
-  
-  t_all=c(man$coefficients[1,1],
-          man$coefficients[1,2],
-          man$coefficients[1,3],
-          man$coefficients[1,4],
-          man$coefficients[1,5],
-          man$coefficients[1,6])
-  
-  m=lm(cbind(X1,X2,X3,X4,X5,X6) ~ factor(w)+factor(n), data=theta$backward)
-  vmat=vcov(m)
-  
-  t_vmat=matrix(0,ncol=6,nrow=6)
-  for(i in 1:6)
-  {
-    t_vmat[i,]=vmat[loc[i],loc]
-  }  
-  backward = list(param = t_all,var = t_vmat)
-  
-  return(list(forward=forward,backward=backward))
+  return(list(forward=list(param = t_all_f,var = t_vmat_f),backward=list(param = t_all_b,var = t_vmat_b)))
 }
-
 
 ## function to create sample used for underlying curves
 ##

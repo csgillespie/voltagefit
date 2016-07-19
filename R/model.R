@@ -13,10 +13,10 @@ fitwafer = function(wafer,lim=2000,id=NULL)
   tot_f = which(diff(subset(wafer,name %in% unique(wafer$name)[1])$VG)<0)[1]
 
   estf = matrix(0,nrow=dim(wafer)[1]/tot_obs,ncol=6)
-  estb = matrix(0,nrow=dim(wafer)[1]/tot_obs,ncol=6)
+  estb = estf
   
   minf = matrix(0,nrow=dim(wafer)[1]/tot_obs,ncol=1)
-  minb = matrix(0,nrow=dim(wafer)[1]/tot_obs,ncol=1)
+  minb = minf
   
   place = 0
   
@@ -52,7 +52,6 @@ fitwafer = function(wafer,lim=2000,id=NULL)
                             ,cost=data.frame(id=rep(id,dim(estb)[1]),name=unique(wafer$name),cost=minb))))
 }
 
-
 ## function to perform fitwafer on multiple wafers, getting parameters and cost
 ## path is the directory where multiple files (each containing a single wafer)
 ## are located, lim is the max number of iterations to use in nlm (default=2000), 
@@ -64,7 +63,7 @@ fitall = function(path,lim=2000)
 {
   files = list.files(path = path, pattern = ".rds")
   message("files read: ",paste(files,collapse=" "))
-  
+
   for(i in 1:length(files))
   {
     wafer = readRDS(paste(path,files[i],sep="")) 
