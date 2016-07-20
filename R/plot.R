@@ -17,8 +17,7 @@ plotweek = function(fitall, curves, fm, orig=TRUE, v)
   op = par(mar=c(3,3,2,1), mgp=c(2,0.4,0), tck=-.01,cex.axis=0.9, las=1)
   on.exit(op)
   
-  if(orig) 
-  {
+  if(orig) {
     m = max(fitall$forward$parameters$max)
     curves$forward = exp(m/curves$forward)
     curves$backward = exp(m/curves$backward)
@@ -29,13 +28,12 @@ plotweek = function(fitall, curves, fm, orig=TRUE, v)
        ylim=limits,
        main=ifelse(orig, "", "Transformed scale"), panel.first=grid(),col="white")
   
-  for(i in 1:nrow(curves$forward)) 
-  {
+  for(i in 1:nrow(curves$forward)) {
     lines(v_f, curves$forward[i,], col=i)
     lines(v_b, curves$backward[i,], col=i, lty=2)
   }
   
-  temp = paste(unique(fm$weight$forward$xlevels$`factor(week)`))
+  temp = paste("week",unique(fm$weight$forward$xlevels$`factor(week)`))
   legend("topleft", temp,col=1:length(unique(fm$weight$forward$xlevels$`factor(week)`)), lty=1)
   legend("bottomright", c("Forwards","Backwards"), col=1, lty=1:2)
 }
