@@ -3,22 +3,19 @@
 ## weekp is of the form, weekparam
 ## v is the voltage gate measurements (for one device)
 
-weekcurve = function(weekp,v)
-{
-  tot_f = which(diff(v)<0)[1]
+weekcurve = function(weekp, v){
+  tot_f = which(diff(v) < 0)[1]
   
-  v_f=v[1:tot_f]
-  v_b=v[tot_f:length(v)]
+  v_f = v[1:tot_f]
+  v_b = v[tot_f:length(v)]
   
-  curves_f=matrix(0,nrow=nrow(weekp$forward),ncol=length(v_f))
-  curves_b=matrix(0,nrow=nrow(weekp$forward),ncol=length(v_b))
-  for(i in 1:nrow(curves_f))
-  {
-    curves_f[i,]=logcurve(v_f,weekp$forward[i,])
-    curves_b[i,]=logcurveb(v_b,weekp$forward[i,],weekp$backward[i,])
+  curves_f = matrix(0, nrow=nrow(weekp$forward), ncol=length(v_f))
+  curves_b = matrix(0, nrow=nrow(weekp$forward), ncol=length(v_b))
+  for (i in 1:nrow(curves_f)){
+    curves_f[i,] = logcurve(v_f, weekp$forward[i,])
+    curves_b[i,] = logcurveb(v_b, weekp$forward[i,], weekp$backward[i,])
   }
-  
-  return(list(forward=curves_f,backward=curves_b))
+  return(list(forward = curves_f, backward = curves_b))
 }
 
 
@@ -27,21 +24,18 @@ weekcurve = function(weekp,v)
 ## underp is of the form, undercurvesim, 
 ## v is the voltage gate measurements (for one device)
 
-undercurve = function(underp,v)
-{
-  tot_f = which(diff(v)<0)[1]
+undercurve = function(underp, v){
+  tot_f = which(diff(v) < 0)[1]
   
-  v_f=v[1:tot_f]
-  v_b=v[tot_f:length(v)]
+  v_f = v[1:tot_f]
+  v_b = v[tot_f:length(v)]
   
-  curves_f=matrix(0,nrow=nrow(underp$forward),ncol=length(v_f))
-  curves_b=matrix(0,nrow=nrow(underp$forward),ncol=length(v_b))
+  curves_f = matrix(0, nrow=nrow(underp$forward), ncol=length(v_f))
+  curves_b = matrix(0, nrow=nrow(underp$forward), ncol=length(v_b))
   
-  for(i in 1:nrow(underp$forward))
-  {
-    curves_f[i,]=logcurve(v_f,underp$forward[i,])
-    curves_b[i,]=logcurveb(v_b,underp$forward[i,],underp$backward[i,])
+  for (i in 1:nrow(underp$forward)){
+    curves_f[i,] = logcurve(v_f, underp$forward[i,])
+    curves_b[i,] = logcurveb(v_b, underp$forward[i,], underp$backward[i,])
   }
-
-  return(list(forward=curves_f,backward=curves_b))
+  return(list(forward = curves_f, backward = curves_b))
 }
