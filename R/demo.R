@@ -5,7 +5,7 @@
 waferdemo = function(){
   # fit all files within a directory, returning the paarmeters  
   # associated with each curve on a given wafer
-  fit = fitall("data/")
+  fit = fitall("test/")
   
   # look at the parameters and cost functions
   histplot(fit)
@@ -15,7 +15,7 @@ waferdemo = function(){
   wafer = rep(c(1:6), c(13,8,13,12,13,13))
   replicate = c(rep(1:4, c(13,8,13,12)), rep(1:2, c(13,13)))
   treatment = rep(1,72)
-  dmat = matrix(c(week, wafer, replicate, treatment), ncol = 4, byrow = F)
+  dmat = data.frame(week=week,wafer=wafer,replicate=replicate,treatment=treatment)
   
   # perform MANOVA on the output of fitall
   man = fitmanova(fit, dmat)
@@ -30,7 +30,7 @@ waferdemo = function(){
   unders = undercurvesim(underp, 1000)
   
   # import the volatge gates which we will plot curves against 
-  temp = readRDS("data/3737.rds")
+  temp = readRDS("test/3737.rds")
   v = temp$VG[1:241]
   
   # calculate the curves for a given week

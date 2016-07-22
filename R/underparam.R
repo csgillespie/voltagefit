@@ -11,10 +11,9 @@ underparam = function(fm)
   
   loc = numeric(6)
   for (i in 1:6){
-    loc[i] = 1 + (i-1)*(length(fm$weight$forward$xlevels$`factor(week)`) 
-												+ length(fm$weight$forward$xlevels$`factor(name)`)) -(i-1) 
+    loc[i] = 1 + (i-1)*(length(fm$weight$forward$xlevels$`factor(week)`))  
   }
-  
+
   t_vmat_f = matrix(0, ncol = 6, nrow = 6)
   t_vmat_b = t_vmat_f
   
