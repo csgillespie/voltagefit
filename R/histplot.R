@@ -9,22 +9,22 @@ histplot = function(fitall){
   
   par(mfrow = c(2, 3))
   for (i in 1:6){
-    hist(fitall$forward$parameters[,i+3], panel.first = grid(), xlab = bquote(theta[.(i)]), main = "")
+    hist(fitall[fitall$direction=="Forward",][,i+5], panel.first = grid(), xlab = bquote(theta[.(i)]), main = "")
   }
   par(mfrow = c(1, 1))
   mtext("Forward", NORTH <- 3, line = 0.7, cex = 1)
   readline("Press enter for the next plot")  
   
-  hist(fitall$forward$cost$cost, panel.first = grid(), xlab = "cost", main = "Forward")
+  hist(fitall[fitall$direction=="Forward",]$cost, panel.first = grid(), xlab = "cost", main = "Forward")
   readline("Press enter for the next plot") 
   
   par(mfrow = c(2, 3))
   for (i in 1:6){
-    hist(fitall$backward$parameters[,i+3], panel.first = grid(), xlab = bquote(theta[.(i)]), main = "")
+    hist(fitall[fitall$direction=="Backward",][,i+5], panel.first = grid(), xlab = bquote(theta[.(i)]), main = "")
   }
   par(mfrow = c(1, 1))
   mtext("Backward", NORTH <- 3, line = 0.7, cex = 1)
   readline("Press enter for the next plot") 
   
-  hist(fitall$backward$cost$cost, panel.first = grid(),xlab = "cost",main = "Backward")
+  hist(fitall[fitall$direction=="Backward",]$cost, panel.first = grid(),xlab = "cost",main = "Backward")
 }

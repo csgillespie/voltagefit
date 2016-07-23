@@ -6,7 +6,7 @@
 
 fitwafer = function(wafer, iterlim=2000, id=NULL){
   if (is.null(id)){
-    id = randomStrings(n=1, len=5)  #this feels slow, poss other function?
+    id = stri_rand_strings(1, 5)
   } 
   else{
     id = gsub(".rds","",id)
@@ -14,13 +14,10 @@ fitwafer = function(wafer, iterlim=2000, id=NULL){
   
   tot_obs = length(subset(wafer, name %in% unique(wafer$name)[1])$VG)
   tot_f = which(diff(subset(wafer, name %in% unique(wafer$name)[1])$VG) < 0)[1]
-
-  estf = matrix(0, nrow = dim(wafer)[1] / tot_obs, ncol = 6)
+  
+  estf = matrix(0, nrow = dim(wafer)[1] / tot_obs, ncol = 7)
   estb = estf
-  
-  minf = matrix(0, nrow = dim(wafer)[1] / tot_obs, ncol = 1)
-  minb = minf
-  
+
   place = 0  
   for (i in unique(wafer$name))
   {
@@ -34,28 +31,26 @@ fitwafer = function(wafer, iterlim=2000, id=NULL){
     m.nlmf = nlm(minlogcurve, c(1.0, 1.4, -3, 4, -1.5, 0.3), d_forward$VG,
                  max(log(abs(d_forward$ID))) / log(abs(d_forward$ID)), iterlim = iterlim) 
     
-    estf[place,] = m.nlmf$estimate
+    estf[place,1:6] = m.nlmf$estimate
     if(m.nlmf$iterations==iterlim) message(paste("Max reached for forward, device ",j,".",k,".",i))
-    minf[place,] = minlogcurve(m.nlmf$estimate, d_forward$VG,
-                              max(log(abs(d_forward$ID))) / log(abs(d_forward$ID)))
+    estf[place,7] = minlogcurve(m.nlmf$estimate, d_forward$VG,
+                               max(log(abs(d_forward$ID))) / log(abs(d_forward$ID)))
     
     #backwards
     m.nlmb = nlm(minlogcurveb, c(0.01, 0.01, 0.01, 0.01, 0.01, 0.01), d_backward$VG,
                  max(log(abs(d_backward$ID))) / log(abs(d_backward$ID)), m.nlmf$estimate, iterlim = iterlim)
     
-    estb[place,] = m.nlmb$estimate
+    estb[place,1:6] = m.nlmb$estimate
     if(m.nlmb$iterations==iterlim) message(paste("Max reached for backward, device ",j,".",k,".",i))
-    minb[place,] = minlogcurveb(m.nlmb$estimate, d_backward$VG,
-                               max(log(abs(d_backward$ID))) / log(abs(d_backward$ID)), m.nlmf$estimate)
+    estb[place,7] = minlogcurveb(m.nlmb$estimate, d_backward$VG,
+                                max(log(abs(d_backward$ID))) / log(abs(d_backward$ID)), m.nlmf$estimate)
   }
-  return(list(forward = list(parameters = data.frame(id = rep(id, dim(estf)[1]), 
-                                                     name = unique(wafer$name),
-                                                     max = rep(max(log(abs(wafer$ID))), dim(estf)[1]), estf),
-                             cost = data.frame(id = rep(id, dim(estf)[1]), name = unique(wafer$name), cost = minf)),
-              backward = list(parameters = data.frame(id = rep(id, dim(estb)[1]),
-                                                      name = unique(wafer$name),
-                                                      max = rep(max(log(abs(wafer$ID))), dim(estf)[1]), estb),
-                             cost = data.frame(id = rep(id, dim(estb)[1]), name = unique(wafer$name), cost = minb))))
+  forward = data.frame(id = id, name = unique(wafer$name), max = max(log(abs(wafer$ID))), 
+                        cost = estf[,7], direction = "Forward", estf[,1:6])
+  backward = data.frame(id = id, name = unique(wafer$name), max = max(log(abs(wafer$ID))), 
+                        cost = estb[,7], direction = "Backward", estb[,1:6])
+  
+  return(rbind(forward,backward))
 }
 
 ## function to perform fitwafer on multiple wafers, getting parameters and cost
@@ -65,28 +60,21 @@ fitwafer = function(wafer, iterlim=2000, id=NULL){
 ## the function returns a list with elements parameters and cost
 ## each wafer should be suitably filtered and formated before been fed in
 
-fitall = function(path, iterlim=2000){
+fitall = function(path, iterlim=2000, cost){
   files = list.files(path = path, pattern = ".rds")
   message("files read: ",paste(files,collapse=" "))
-
+  
   for(i in 1:length(files)){
     wafer = readRDS(paste(path, files[i], sep="")) 
     message("wafer: ",files[i])
-    temp = fitwafer(wafer, iterlim, files[i])
+    fit = fitwafer(wafer, iterlim, files[i])
     
     if(i==1){
-      estf = temp$forward$parameters
-      estb = temp$backward$parameters
-      minf = temp$forward$cost
-      minb = temp$backward$cost
+      param = fit
     }
     else{
-      estf = rbind(estf,temp$forward$parameters)
-      estb = rbind(estb,temp$backward$parameters)
-      minf = rbind(minf,temp$forward$cost)
-      minb = rbind(minb,temp$backward$cost)
+      param = rbind(param, fit)
     }
   }
-  return(list(forward = list(parameters = estf, cost = minf),
-              backward = list(parameters = estb, cost = minb)))
+  return(param)
 }

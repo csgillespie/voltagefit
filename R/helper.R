@@ -9,7 +9,7 @@ logcurve = function(x, param){
 minlogcurve = function(x, datax, datay){
   #x is what will be used (changed) to minimise, i.e param values 
   z = logcurve(datax, x)
-  res = (z - datay)^2
+  res = costfun(z,datay) #(z - datay)^2
   sum(res[!is.nan(res)])
 }
 
@@ -24,8 +24,12 @@ logcurveb = function(x, paramf, paramb)
 minlogcurveb = function(x, datax, datay, paramf){
   #x is what will be used (changed) to minimise, i.e param values 
   z = logcurveb(datax, paramf, x)
-  res = (z - datay)^2
+  res = costfun(z,datay) #(z - datay)^2
   sum(res[!is.nan(res)])
+}
+
+costfun = function(x,y){
+  (x-y)^2
 }
 
 ## residual creates the residuals 

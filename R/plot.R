@@ -17,7 +17,7 @@ plotweek = function(fitall, curves, fm, orig=TRUE, v){
   on.exit(op)
   
   if (orig){
-    m = max(fitall$forward$parameters$max)
+    m = max(fitall$max)
     curves$forward = exp(m / curves$forward)
     curves$backward = exp(m / curves$backward)
   }
@@ -35,7 +35,6 @@ plotweek = function(fitall, curves, fm, orig=TRUE, v){
   legend("topleft", temp, col = 1:length(unique(fm$weight$forward$xlevels$`factor(week)`)), lty = 1)
   legend("bottomright", c("Forwards", "Backwards"), col = 1, lty = 1:2)
 }
-
 
 ## function to create underlying forward curve
 ##
@@ -60,7 +59,7 @@ plotunder = function(fitall, curves, orig=T, med=F, v){
   on.exit(op)
   
   if (orig){
-    m = max(fitall$forward$parameters$max)
+    m = max(fitall$max)
     curves$forward = exp(m / curves$forward)
     curves$backward = exp(m / curves$backward)
   }
@@ -81,7 +80,7 @@ plotunder = function(fitall, curves, orig=T, med=F, v){
   upper_f = colQuantiles(curves$forward, probs=0.975)
   lower_b = colQuantiles(curves$backward, probs=0.025)
   upper_b = colQuantiles(curves$backward, probs=0.975)
-
+  
   plot(v_f, means_f, type = "l", xlab = "Vg (V)", ylab = "Id (A)", log = "y", 
        ylim = limits, main = ifelse(orig, "", "Transformed scale"), panel.first = grid())
   lines(v_f, lower_f, lty = 2)

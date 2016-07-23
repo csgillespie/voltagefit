@@ -1,3 +1,12 @@
+man = function(data, weight){
+  man_w = manova(data.matrix(data[,8:13]) ~ factor(week), 
+                   data = data, weights = 1 / weight) 
+  varcov = vcov(lm(data.matrix(data[,8:13]) ~ factor(week), data = data))
+  
+  return(list(man_w = man_w, varcov = varcov))
+}
+
+
 ## function to fit manova to the results of fitall
 ##
 ## fitall is of the form fitall, design is the design matrix with columns 
@@ -8,19 +17,13 @@ fitmanova = function(fitall, design){
   options(contrasts = c("contr.sum", "contr.sum"))
   on.exit(options(contrasts = op))
   
-  fdata = cbind(week = design$week, treatment = design$treatment, fitall$forward$parameters)
-  bdata = cbind(week = design$week, treatment = design$treatment, fitall$backward$parameters)
+  fdata = cbind(week = design$week, treatment = design$treatment, f[f$direction=="Forward",])
+  bdata = cbind(week = design$week, treatment = design$treatment, f[f$direction=="Backward",])
   
-  man_w_f = manova(cbind(X1,X2,X3,X4,X5,X6) ~ factor(week), 
-                   data = fdata, weights = 1 / fitall$forward$cost$cost) 
-  m_f = lm(cbind(X1,X2,X3,X4,X5,X6) ~ factor(week), data = fdata)
+  # HOW TO GET TREATMENT IN TO BELOW WITHOUT IT BREAKING!!!!
   
-  man_w_b = manova(cbind(X1,X2,X3,X4,X5,X6) ~ factor(week), 
-                   data = bdata, weights = 1 / fitall$forward$cost$cost) 
-  m_b = lm(cbind(X1,X2,X3,X4,X5,X6) ~ factor(week), data = bdata)
+  f = man(fdata, fdata$cost)
+  b = man(bdata, fdata$cost)
   
-  weight = list(forward = man_w_f, backward = man_w_b)
-  noweight = list(forward = m_f, backward = m_b)
-  
-  return(list(weight = weight, noweight = noweight))
+  return(list(forward = f, backward = b))
 }

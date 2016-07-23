@@ -9,12 +9,17 @@ weekcurve = function(weekp, v){
   v_f = v[1:tot_f]
   v_b = v[tot_f:length(v)]
   
-  curves_f = matrix(0, nrow=nrow(weekp$forward), ncol=length(v_f))
-  curves_b = matrix(0, nrow=nrow(weekp$forward), ncol=length(v_b))
+  param_f = weekp[weekp$direction=="Forward",3:8]
+  param_b = weekp[weekp$direction=="Backward",3:8]
+  
+  curves_f = matrix(0, nrow=nrow(param_f), ncol=length(v_f))
+  curves_b = matrix(0, nrow=nrow(curves_f), ncol=length(v_b))
+  
   for (i in 1:nrow(curves_f)){
-    curves_f[i,] = logcurve(v_f, weekp$forward[i,])
-    curves_b[i,] = logcurveb(v_b, weekp$forward[i,], weekp$backward[i,])
+    curves_f[i,] = logcurve(v_f, as.numeric(param_f[i,]))
+    curves_b[i,] = logcurveb(v_b, as.numeric(param_f[i,]), as.numeric(param_b[i,]))
   }
+  
   return(list(forward = curves_f, backward = curves_b))
 }
 
@@ -30,12 +35,15 @@ undercurve = function(underp, v){
   v_f = v[1:tot_f]
   v_b = v[tot_f:length(v)]
   
-  curves_f = matrix(0, nrow=nrow(underp$forward), ncol=length(v_f))
-  curves_b = matrix(0, nrow=nrow(underp$forward), ncol=length(v_b))
+  param_f = underp[underp$direction=="Forward",2:7]
+  param_b = underp[underp$direction=="Backward",2:7]
   
-  for (i in 1:nrow(underp$forward)){
-    curves_f[i,] = logcurve(v_f, underp$forward[i,])
-    curves_b[i,] = logcurveb(v_b, underp$forward[i,], underp$backward[i,])
+  curves_f = matrix(0, nrow=nrow(param_f), ncol=length(v_f))
+  curves_b = matrix(0, nrow=nrow(curves_f), ncol=length(v_b))
+  
+  for (i in 1:nrow(curves_f)){
+    curves_f[i,] = logcurve(v_f, as.numeric(param_f[i,]))
+    curves_b[i,] = logcurveb(v_b, as.numeric(param_f[i,]), as.numeric(param_b[i,]))
   }
   return(list(forward = curves_f, backward = curves_b))
 }
