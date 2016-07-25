@@ -1,0 +1,100 @@
+## THIS FILE SHOULD BE USED LOCALLY TO DEMONSTRATE THE STEPS IN AN ANALYSIS
+
+## Initially source the R files needed 
+
+source("R/helper.R")
+source("R/model.R")
+source("R/fitmanova.R")
+source("R/weekparam.R")
+source("R/underparam.R")
+source("R/curves.R")
+source("R/histplot.R")
+source("R/plot.R")
+source("R/demo.R")
+
+## load the required librarys
+#install.packages("nlme")
+#install.packages("MASS")
+#install.packages("matrixStats")
+#install.packages("stringi")
+
+library(nlme)
+library(MASS)
+library(matrixStats)
+library(stringi)
+
+## Fit the model to all files in a directory
+## Here we fit to two weeks of data
+## Week 1: wafers = 3737,3757,3758,3759 (4 wafers)
+## Week 2: wafer = 4464,4465 (2 wafers)
+fit = fitall("data/")
+
+
+## make the design matrix, bespoke for each setup 
+week = c(1,1,1,1,2,2)
+wafer = unique(fit$id)
+replicate = c(1:4,1:2)
+treatment = rep(1,6)
+design = data.frame(week = week, wafer = wafer, replicate = replicate, treatment = treatment)
+##   week wafer replicate treatment
+## 1    1  3737         1         1
+## 2    1  3757         2         1
+## 3    1  3758         3         1
+## 4    1  3759         4         1
+## 5    2  4464         1         1
+## 6    2  4465         2         1
+
+
+## Fit MANOVA to the output of fit 
+## (performing MANOVA with the parameter values as the response)
+fitman = fitmanova(fit, design)
+
+## look at the parameter values and cost function
+histplot(fit)
+
+## Calculate the week parameters (the parameters for each curve 
+## corresponding to each week)
+weekp = weekparam(fitman)
+
+
+## Calculate the underlying parameters (the parameters for the 
+## underlying curve)
+underp = underparam(fitman)
+
+
+## Generate a sample of parameters for the underlying curve
+unders = undercurvesim(underp, 1000)
+
+
+## Calculate the week curves
+weekc = weekcurve(fit, weekp)
+
+
+## Calculate the underlying curves (one from each in the sample)
+underc = undercurve(fit, unders)
+
+
+## Plot the week curves
+## On transformed scale (on which model fit takes place)
+plotweek(fit, weekc, fitman, F)
+
+# On original scale
+plotweek(fit, weekc, fitman, T)
+
+
+## Plot the underlying curve
+## On transformed scale (on which model fit takes place)
+## using the mean curve
+plotunder(fit, underc, F, F)
+
+## On transformed scale (on which model fit takes place)
+## using the median curve
+plotunder(fit, underc, F, T)
+
+# On original scale
+## using the mean curve
+plotunder(fit, underc, T, F)
+
+# On original scale
+## using the median curve
+plotunder(fit, underc, T, T)

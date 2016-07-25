@@ -40,8 +40,8 @@ fitmanova = function(fitall, design){
   week = rep(design[design$wafer==names(len),]$week, len)
   treatment = rep(design[design$wafer==names(len),]$treatment, len)
   
-  fdata = data.frame(week = week, treatment = treatment, f[f$direction=="Forward",])
-  bdata = data.frame(week = week, treatment = treatment, f[f$direction=="Backward",])
+  fdata = data.frame(week = week, treatment = treatment, fitall[fitall$direction=="Forward",])
+  bdata = data.frame(week = week, treatment = treatment, fitall[fitall$direction=="Backward",])
   
   # HOW TO GET TREATMENT IN TO BELOW WITHOUT IT BREAKING!!!!
   
