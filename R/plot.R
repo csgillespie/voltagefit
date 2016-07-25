@@ -5,13 +5,12 @@
 ## fm is of the form, fitmanova
 ## orig is whether the plot should be on the original data scale or 
 ## the transformed scale, default is the original scale, 
-## v is the voltage gate measurements (for one device) to be plotted against
 ##
 ## the function produces a plot 
 
-plotweek = function(fitall, curves, fm, orig=TRUE, v){
+plotweek = function(fitall, curves, fm, orig=TRUE){
+  v = attr(fitall,"v")
   tot_f = which(diff(v) < 0)[1]
-  
   v_f = v[1:tot_f]
   v_b = v[tot_f:length(v)]
   
@@ -33,8 +32,8 @@ plotweek = function(fitall, curves, fm, orig=TRUE, v){
     lines(v_b, curves$backward[i,], col = i, lty = 2)
   }
   
-  temp = paste("week", unique(fm$weight$forward$xlevels$`factor(week)`))
-  legend("topleft", temp, col = 1:length(unique(fm$weight$forward$xlevels$`factor(week)`)), lty = 1)
+  temp = paste("week", unique(fm$forward$man_w$xlevels$`factor(week)`))
+  legend("topleft", temp, col = 1:length(unique(fm$forward$man_w$xlevels$`factor(week)`)), lty = 1)
   legend("bottomright", c("Forwards", "Backwards"), col = 1, lty = 1:2)
 }
 
@@ -47,16 +46,15 @@ plotweek = function(fitall, curves, fm, orig=TRUE, v){
 ## the transformed scale, default is the original scale, 
 ## med is whether the mean or the median should be used, the default 
 ## is the mean curve,
-## v is the voltage gate measurements (for one device) to be plotted against
 ##
 ## the function produces a plot 
 ##
 ## N.B. using the mean with low levels of data can lead to splurious curves, 
 ## the median appears to be more stable!
 
-plotunder = function(fitall, curves, orig=T, med=F, v){
+plotunder = function(fitall, curves, orig=T, med=F){
+  v = attr(fitall,"v")
   tot_f = which(diff(v) < 0)[1]
-  
   v_f = v[1:tot_f]
   v_b = v[tot_f:length(v)]
   

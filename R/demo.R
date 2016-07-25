@@ -1,6 +1,5 @@
 ## function to demo the functions included with this package,
 ## we fit to two weeks of data
-##
 
 waferdemo = function(){
   # fit all files within a directory, returning the paarmeters  
@@ -11,14 +10,14 @@ waferdemo = function(){
   histplot(fit)
   
   #make the design matrix, dmat
-  week = rep(1:2, c(46,26))
-  wafer = rep(c(1:6), c(13,8,13,12,13,13))
-  replicate = c(rep(1:4, c(13,8,13,12)), rep(1:2, c(13,13)))
-  treatment = rep(1,72)
-  dmat = data.frame(week=week,wafer=wafer,replicate=replicate,treatment=treatment)
+  week = c(1,1,1,1,2,2)
+  wafer = unique(f$id)
+  replicate = c(1:4,1:2)
+  treatment = rep(1,6)
+  design = data.frame(week = week, wafer = wafer, replicate = replicate, treatment = treatment)
   
   # perform MANOVA on the output of fitall
-  man = fitmanova(fit, dmat)
+  man = fitmanova(fit, design)
   
   # calculate the parameters associated with a curve for a given week
   weekp = weekparam(man)
@@ -29,21 +28,17 @@ waferdemo = function(){
   #generate a sample from the underlying curve parameter distribution 
   unders = undercurvesim(underp, 1000)
   
-  # import the volatge gates which we will plot curves against 
-  temp = readRDS("test/3737.rds")
-  v = temp$VG[1:241]
-  
   # calculate the curves for a given week
-  weekc = weekcurve(weekp, v)
+  weekc = weekcurve(fit, weekp)
   
   # calculate the underlying curve
-  underc = undercurve(unders, v)
+  underc = undercurve(fit, unders)
   
   readline("Press enter for the next plot") 
   #plot the week curves
-  plotweek(fit, weekc, man, T, v)
+  plotweek(fit, weekc, man, T)
   
   readline("Press enter for the next plot") 
   #plot the underlying curve
-  plotunder(fit, underc, T, T, v)
+  plotunder(fit, underc, T, T)
 }

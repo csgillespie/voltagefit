@@ -85,6 +85,9 @@ fitwafer = function(wafer, iterlim=2000, id=NULL){
 ## direction = whether it is the forward or backward curve
 ## X1 - X6 = the parameters characterising the curves
 ##
+## we append the attribute v (voltage gate readings for one device)
+## used in the curve functions and plotting functions 
+##
 ## That is an extended version of fitwafer
 ##
 ## N.B. It is assumed that any wafer entering this function (and 
@@ -104,10 +107,12 @@ fitall = function(path, iterlim=2000, cost){
     
     if(i==1){
       param = fit
+      v = wafer[wafer$name==unique(wafer$name)[1],]$VG
     }
     else{
       param = rbind(param, fit)
     }
   }
+  attr(param,"v") = v
   return(param)
 }

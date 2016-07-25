@@ -1,16 +1,14 @@
 ## function to create curves for each week
 ##
+## fitall is of the form fitall,
 ## weekp is of the form, weekparam
-## v is the voltage gate measurements (for one device)
-
-## CURRENTLY V MUST BE SPECIFIED AHEAD OF TIME!!! RECTIFY THIS!!!
-
+##
 ## the function returns a list containing elements forward and 
 ## backward, each containing the curves for each week (one curve per row)
 
-weekcurve = function(weekp, v){
+weekcurve = function(fitall, weekp){
+  v = attr(fitall,"v")
   tot_f = which(diff(v) < 0)[1]
-  
   v_f = v[1:tot_f]
   v_b = v[tot_f:length(v)]
   
@@ -31,17 +29,15 @@ weekcurve = function(weekp, v){
 
 ## function to create underlying curve
 ##
+## fitall is of the form fitall,
 ## underp is of the form, undercurvesim, 
-## v is the voltage gate measurements (for one device)
-
-## CURRENTLY V MUST BE SPECIFIED AHEAD OF TIME!!! RECTIFY THIS!!!
-
+##
 ## the function returns a list containing elements forward and 
 ## backward, each containing the sample of underlying curves (one curve per row)
 
-undercurve = function(underp, v){
+undercurve = function(fitall ,underp){
+  v = attr(fitall,"v")
   tot_f = which(diff(v) < 0)[1]
-  
   v_f = v[1:tot_f]
   v_b = v[tot_f:length(v)]
   
