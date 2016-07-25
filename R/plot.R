@@ -6,6 +6,8 @@
 ## orig is whether the plot should be on the original data scale or 
 ## the transformed scale, default is the original scale, 
 ## v is the voltage gate measurements (for one device) to be plotted against
+##
+## the function produces a plot 
 
 plotweek = function(fitall, curves, fm, orig=TRUE, v){
   tot_f = which(diff(v) < 0)[1]
@@ -17,7 +19,7 @@ plotweek = function(fitall, curves, fm, orig=TRUE, v){
   on.exit(op)
   
   if (orig){
-    m = max(fitall$forward$parameters$max)
+    m = max(fitall$max)
     curves$forward = exp(m / curves$forward)
     curves$backward = exp(m / curves$backward)
   }
@@ -37,7 +39,7 @@ plotweek = function(fitall, curves, fm, orig=TRUE, v){
 }
 
 
-## function to create underlying forward curve
+## function to plot underlying curve
 ##
 ## fitall is of the form, fitall
 ## curves is of the form, undercurve, 
@@ -46,9 +48,12 @@ plotweek = function(fitall, curves, fm, orig=TRUE, v){
 ## med is whether the mean or the median should be used, the default 
 ## is the mean curve,
 ## v is the voltage gate measurements (for one device) to be plotted against
-
+##
+## the function produces a plot 
+##
 ## N.B. using the mean with low levels of data can lead to splurious curves, 
 ## the median appears to be more stable!
+
 
 plotunder = function(fitall, curves, orig=T, med=F, v){
   tot_f = which(diff(v) < 0)[1]
@@ -60,7 +65,7 @@ plotunder = function(fitall, curves, orig=T, med=F, v){
   on.exit(op)
   
   if (orig){
-    m = max(fitall$forward$parameters$max)
+    m = max(fitall$max)
     curves$forward = exp(m / curves$forward)
     curves$backward = exp(m / curves$backward)
   }
@@ -81,7 +86,7 @@ plotunder = function(fitall, curves, orig=T, med=F, v){
   upper_f = colQuantiles(curves$forward, probs=0.975)
   lower_b = colQuantiles(curves$backward, probs=0.025)
   upper_b = colQuantiles(curves$backward, probs=0.975)
-
+  
   plot(v_f, means_f, type = "l", xlab = "Vg (V)", ylab = "Id (A)", log = "y", 
        ylim = limits, main = ifelse(orig, "", "Transformed scale"), panel.first = grid())
   lines(v_f, lower_f, lty = 2)
