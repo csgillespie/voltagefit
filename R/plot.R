@@ -54,7 +54,6 @@ plotweek = function(fitall, curves, fm, orig=TRUE, v){
 ## N.B. using the mean with low levels of data can lead to splurious curves, 
 ## the median appears to be more stable!
 
-
 plotunder = function(fitall, curves, orig=T, med=F, v){
   tot_f = which(diff(v) < 0)[1]
   
