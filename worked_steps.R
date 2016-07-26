@@ -33,7 +33,7 @@ fit = fitall("data/")
 ## If you wanted at this point you could run 
 ## curves(f,f)
 ## and then plot the output of each curve (device) on the wafers
-
+## N.B This would be the option if we only considered a single week
 
 ## look at the parameter values and cost function
 histplot(fit)
