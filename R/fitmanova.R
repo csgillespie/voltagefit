@@ -15,10 +15,10 @@
 
 man = function(data, weight){
   ## fit MANOVA with weight
-  man_w = manova(data.matrix(data[,8:13]) ~ factor(week), 
+  man_w = manova(data.matrix(data[,grep("X[0-9]+",colnames(data))]) ~ factor(week), 
                    data = data, weights = 1 / weight) 
   ## calculate vcov (without weight)
-  varcov = vcov(lm(data.matrix(data[,8:13]) ~ factor(week), data = data))
+  varcov = vcov(lm(data.matrix(data[,grep("X[0-9]+",colnames(data))]) ~ factor(week), data = data))
   
   return(list(man_w = man_w, varcov = varcov))
 }

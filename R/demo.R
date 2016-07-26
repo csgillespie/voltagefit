@@ -12,7 +12,7 @@ waferdemo = function(){
   #make the design matrix, dmat
   week = c(1,1,1,1,2,2)
   wafer = unique(f$id)
-  replicate = c(1:6)
+  replicate = c(1:4,1:2)
   treatment = rep(1,6)
   design = data.frame(week = week, wafer = wafer, replicate = replicate, treatment = treatment)
   
@@ -29,10 +29,10 @@ waferdemo = function(){
   unders = undercurvesim(underp, 1000)
   
   # calculate the curves for a given week
-  weekc = weekcurve(fit, weekp)
+  weekc = curves(fit, weekp)
   
   # calculate the underlying curve
-  underc = undercurve(fit, unders)
+  underc = curves(fit, unders)
   
   readline("Press enter for the next plot") 
   #plot the week curves

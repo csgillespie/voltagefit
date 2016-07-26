@@ -30,6 +30,14 @@ library(stringi)
 fit = fitall("data/")
 
 
+## If you wanted at this point you could run 
+## curves(f,f)
+## and then plot the output of each curve (device) on the wafers
+
+
+## look at the parameter values and cost function
+histplot(fit)
+
 ## make the design matrix, bespoke for each setup 
 week = c(1,1,1,1,2,2)
 wafer = unique(fit$id)
@@ -49,8 +57,11 @@ design = data.frame(week = week, wafer = wafer, replicate = replicate, treatment
 ## (performing MANOVA with the parameter values as the response)
 fitman = fitmanova(fit, design)
 
-## look at the parameter values and cost function
-histplot(fit)
+
+## look at the output of the MANOVA, using commands such as 
+summary(fitman$forward$man_w)
+summary(fitman$backward$man_w)
+
 
 ## Calculate the week parameters (the parameters for each curve 
 ## corresponding to each week)
@@ -67,11 +78,11 @@ unders = undercurvesim(underp, 1000)
 
 
 ## Calculate the week curves
-weekc = weekcurve(fit, weekp)
+weekc = curves(fit, weekp)
 
 
 ## Calculate the underlying curves (one from each in the sample)
-underc = undercurve(fit, unders)
+underc = curves(fit, unders)
 
 
 ## Plot the week curves
