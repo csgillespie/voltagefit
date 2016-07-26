@@ -14,8 +14,10 @@
 ## from bizarre parameter combinations)
 
 man = function(data, weight){
+  ## fit MANOVA with weight
   man_w = manova(data.matrix(data[,8:13]) ~ factor(week), 
                    data = data, weights = 1 / weight) 
+  ## calculate vcov (without weight)
   varcov = vcov(lm(data.matrix(data[,8:13]) ~ factor(week), data = data))
   
   return(list(man_w = man_w, varcov = varcov))
@@ -33,20 +35,23 @@ man = function(data, weight){
 
 fitmanova = function(fitall, design){
   op = getOption("contrasts")
-  options(contrasts = c("contr.sum", "contr.sum"))
+  options(contrasts = c("contr.sum", "contr.sum")) ## set contrasts to be used in MANOVA
   on.exit(options(contrasts = op))
   
+  ## calculate the week and treatment set up from the design matrix, 
+  ## replicating for all devices on a wafer
   len = tapply(fitall[fitall$direction=="Forward",]$id,fitall[fitall$direction=="Forward",]$id, length)
   week = rep(design[design$wafer==names(len),]$week, len)
   treatment = rep(design[design$wafer==names(len),]$treatment, len)
   
+  ## combine with parameters
   fdata = data.frame(week = week, treatment = treatment, fitall[fitall$direction=="Forward",])
   bdata = data.frame(week = week, treatment = treatment, fitall[fitall$direction=="Backward",])
   
   # HOW TO GET TREATMENT IN TO BELOW WITHOUT IT BREAKING!!!!
   
-  f = man(fdata, fdata$cost)
-  b = man(bdata, fdata$cost)
+  f = man(fdata, fdata$cost) ## fit MANOVA to forward pass
+  b = man(bdata, fdata$cost) ## fir MANOVA to backward pass
   
   return(list(forward = f, backward = b))
 }

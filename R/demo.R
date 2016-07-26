@@ -12,7 +12,7 @@ waferdemo = function(){
   #make the design matrix, dmat
   week = c(1,1,1,1,2,2)
   wafer = unique(f$id)
-  replicate = c(1:4,1:2)
+  replicate = c(1:6)
   treatment = rep(1,6)
   design = data.frame(week = week, wafer = wafer, replicate = replicate, treatment = treatment)
   

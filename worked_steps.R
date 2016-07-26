@@ -33,7 +33,7 @@ fit = fitall("data/")
 ## make the design matrix, bespoke for each setup 
 week = c(1,1,1,1,2,2)
 wafer = unique(fit$id)
-replicate = c(1:4,1:2)
+replicate = c(1:6)
 treatment = rep(1,6)
 design = data.frame(week = week, wafer = wafer, replicate = replicate, treatment = treatment)
 ##   week wafer replicate treatment
@@ -41,8 +41,8 @@ design = data.frame(week = week, wafer = wafer, replicate = replicate, treatment
 ## 2    1  3757         2         1
 ## 3    1  3758         3         1
 ## 4    1  3759         4         1
-## 5    2  4464         1         1
-## 6    2  4465         2         1
+## 5    2  4464         5         1
+## 6    2  4465         6         1
 
 
 ## Fit MANOVA to the output of fit 

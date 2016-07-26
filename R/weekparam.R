@@ -19,9 +19,11 @@ weekparam = function(fm){
   
   for (i in 1:6){
     for (j in 1:(nrow(param_f) - 1)){
+      ## for each parameter, extract and combine from MANOVA output. Both forward and backward 
       param_f[j,i] = fm$forward$man_w$coefficients[1,i] + fm$forward$man_w$coefficients[j+1,i]
       param_b[j,i] = fm$backward$man_w$coefficients[1,i] + fm$backward$man_w$coefficients[j+1,i]
     }
+    ## calculate the last parameter from the sum of all the others
     param_f[nrow(param_f),i] = fm$forward$man_w$coefficients[1,i] - sum(fm$forward$man_w$coefficients[2:nrow(param_f),i])
     param_b[nrow(param_f),i] = fm$backward$man_w$coefficients[1,i] - sum(fm$backward$man_w$coefficients[2:nrow(param_f),i])
   }

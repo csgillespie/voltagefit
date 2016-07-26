@@ -18,7 +18,7 @@ plotweek = function(fitall, curves, fm, orig=TRUE){
   on.exit(op)
   
   if (orig){
-    m = max(fitall$max)
+    m = max(fitall$max) ## transformation to put back on original scale
     curves$forward = exp(m / curves$forward)
     curves$backward = exp(m / curves$backward)
   }
@@ -62,23 +62,26 @@ plotunder = function(fitall, curves, orig=T, med=F){
   on.exit(op)
   
   if (orig){
-    m = max(fitall$max)
+    m = max(fitall$max) ## transformation to put back on original scale
     curves$forward = exp(m / curves$forward)
     curves$backward = exp(m / curves$backward)
   }
   limits = range(curves$backward, curves$forward)
   
   if(med){
+    ## calculate median curve if required
     means_f = colQuantiles(curves$forward, probs = 0.5)
     means_b = colQuantiles(curves$backward, probs = 0.5)
     temp = c("Median", "95% Interval")
   }
   else{
+    ## calculate mean curve if required
     means_f = colMeans(curves$forward)
     means_b = colMeans(curves$backward)
     temp = c("Mean", "95% Interval")
   }
   
+  ## calculate 95% region of underlying curves
   lower_f = colQuantiles(curves$forward, probs=0.025)
   upper_f = colQuantiles(curves$forward, probs=0.975)
   lower_b = colQuantiles(curves$backward, probs=0.025)
