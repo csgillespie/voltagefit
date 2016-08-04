@@ -1,13 +1,23 @@
-## function to create curves 
-##
-## fitall is of the form fitall,
-## param is of the form, weekparam or undercurvesim
-##
-## the function returns a list containing elements forward and 
-## backward, each containing the curves for each week (one curve per row)
-
-curves = function(fitall, param){
-  v = attr(fitall,"v")
+#' Function to create curves
+#'
+#' Function to create curves
+#'
+#' @param fitted   Fitted data.frame as given by \code{\link{fitwafer}}.
+#' @param param    Samples as given by \code{\link{undercurvesim}} or \code{\link{weekparam}}.
+#' 
+#' @return A list containing elements forward and backward, each containing the curves for each week (one curve per row).
+#' @examples
+#' wafers_folder = paste(path.package("voltagefit"),"/extdata/",sep="") # path to wafters data directory
+#' fitted = fitall(wafers_folder)
+#' design = data.frame(week = c(1,1,1,1,2,2), wafer = unique(fitted$id), replicate = c(1:6), treatment = rep(1:6))
+#' fitman = fitmanova(fitted, design)
+#' underp = underparam(fitman)
+#' param = undercurvesim(underp)
+#' curves(fitted,param)
+#'
+#' @export
+curves = function(fitted, param){
+  v = attr(fitted,"v")
   tot_f = which(diff(v) < 0)[1]
   v_f = v[1:tot_f]
   v_b = v[tot_f:length(v)]

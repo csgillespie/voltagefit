@@ -1,34 +1,15 @@
 ## THIS FILE SHOULD BE USED LOCALLY TO DEMONSTRATE THE STEPS IN AN ANALYSIS
-
 ## Initially source the R files needed 
 
-source("R/helper.R")
-source("R/model.R")
-source("R/fitmanova.R")
-source("R/weekparam.R")
-source("R/underparam.R")
-source("R/curves.R")
-source("R/histplot.R")
-source("R/plot.R")
-source("R/demo.R")
-
-## load the required librarys
-#install.packages("nlme")
-#install.packages("MASS")
-#install.packages("matrixStats")
-#install.packages("stringi")
-
-library(nlme)
-library(MASS)
-library(matrixStats)
-library(stringi)
+## Fit the model to a single wafer
+## Here we fit to wafer3737
+fit = fitwafer(wafer3737)
 
 ## Fit the model to all files in a directory
 ## Here we fit to two weeks of data
 ## Week 1: wafers = 3737,3757,3758,3759 (4 wafers)
 ## Week 2: wafer = 4464,4465 (2 wafers)
-fit = fitall("data/")
-
+fit = fitall("inst/extdata/")
 
 ## If you wanted at this point you could run 
 ## curves(f,f)
@@ -74,7 +55,7 @@ underp = underparam(fitman)
 
 
 ## Generate a sample of parameters for the underlying curve
-unders = undercurvesim(underp, 1000)
+unders = undercurvesim(underp)
 
 
 ## Calculate the week curves

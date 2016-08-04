@@ -11,7 +11,8 @@ Remotes:
 Imports:
     nlme (>= 3.1-128),
     MASS (>= 7.3-44),
-    stringi (>= 1.1.1)
+    stringi (>= 1.1.1),
+    matrixStats
 License: GPL-2 | GPL-3
 Encoding: UTF-8
 LazyData: true

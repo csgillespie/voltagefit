@@ -1,15 +1,25 @@
-## function to plot curves for each week
-##
-## fitall is of the form, fitall
-## curves is of the form, weekcurve, 
-## fm is of the form, fitmanova
-## orig is whether the plot should be on the original data scale or 
-## the transformed scale, default is the original scale, 
-##
-## the function produces a plot 
-
-plotweek = function(fitall, curves, fm, orig=TRUE){
-  v = attr(fitall,"v")
+#' Plot curves for each week
+#'
+#' Plot curves for each week
+#'
+#' @param fitted    Fitted data.frame as given by \code{\link{fitwafer}}.
+#' @param wcurves   Week curves as given by \code{\link{curves}}.
+#' @param fm        Fitted manova as given by \code{\link{fitmanova}}.
+#' @param orig      Boolean value deciding whether the plot should be on the original data scale or the transformed scale (Default: TRUE) 
+#' 
+#' @return None. This function produces a plot.
+#' @examples
+#' wafers_folder = paste(path.package("voltagefit"),"/extdata/",sep="") # path to wafters data directory
+#' fitted = fitall(wafers_folder)
+#' design = data.frame(week = c(1,1,1,1,2,2), wafer = unique(fitted$id), replicate = c(1:6), treatment = rep(1:6))
+#' fitman = fitmanova(fitted, design)
+#' weekp = weekparam(fitman)
+#' wcurves = curves(fitted, weekp)
+#' plotweek = function(fitted, wcurves, fitman)
+#'
+#' @export
+plotweek = function(fitted, wcurves, fm, orig=TRUE){
+  v = attr(fitted,"v")
   tot_f = which(diff(v) < 0)[1]
   v_f = v[1:tot_f]
   v_b = v[tot_f:length(v)]
@@ -18,18 +28,18 @@ plotweek = function(fitall, curves, fm, orig=TRUE){
   on.exit(op)
   
   if (orig){
-    m = max(fitall$max) ## transformation to put back on original scale
-    curves$forward = exp(m / curves$forward)
-    curves$backward = exp(m / curves$backward)
+    m = max(fitted$max) ## transformation to put back on original scale
+    wcurves$forward = exp(m / wcurves$forward)
+    wcurves$backward = exp(m / wcurves$backward)
   }
-  limits = range(curves$backward, curves$forward)
+  limits = range(wcurves$backward, wcurves$forward)
   
-  plot(v_f, curves$forward[1,], type = "l", xlab = "Vg (V)", ylab = "Id (A)", log = "y", 
+  plot(v_f, wcurves$forward[1,], type = "l", xlab = "Vg (V)", ylab = "Id (A)", log = "y", 
        ylim = limits, main = ifelse(orig, "", "Transformed scale"), panel.first = grid(), col = "white")
   
-  for (i in 1:nrow(curves$forward)){
-    lines(v_f, curves$forward[i,], col = i)
-    lines(v_b, curves$backward[i,], col = i, lty = 2)
+  for (i in 1:nrow(wcurves$forward)){
+    lines(v_f, wcurves$forward[i,], col = i)
+    lines(v_b, wcurves$backward[i,], col = i, lty = 2)
   }
   
   temp = paste("week", unique(fm$forward$man_w$xlevels$`factor(week)`))
@@ -37,23 +47,32 @@ plotweek = function(fitall, curves, fm, orig=TRUE){
   legend("bottomright", c("Forwards", "Backwards"), col = 1, lty = 1:2)
 }
 
-
-## function to plot underlying curve
-##
-## fitall is of the form, fitall
-## curves is of the form, undercurve, 
-## orig is whether the plot should be on the original data scale or 
-## the transformed scale, default is the original scale, 
-## med is whether the mean or the median should be used, the default 
-## is the mean curve,
-##
-## the function produces a plot 
-##
-## N.B. using the mean with low levels of data can lead to splurious curves, 
-## the median appears to be more stable!
-
-plotunder = function(fitall, curves, orig=T, med=F){
-  v = attr(fitall,"v")
+#' Plot underlying curve
+#'
+#' Plot underlying curve
+#' N.B. using the mean with low levels of data can lead to spurious curves, 
+#' the median appears to be more stable!
+#'
+#' @param fitted    Fitted data.frame as given by \code{\link{fitwafer}}.
+#' @param underc   Underlying curve as given by \code{\link{curves}}.
+#' @param orig      Boolean value deciding whether the plot should be on the original data scale or the transformed scale (Default: TRUE) 
+#' @param med       Boolean value deciding whether the whether the median should be used rather than mean (Default: FALSE)
+#' 
+#' @return None. This function produces a plot.
+#' @examples
+#' wafers_folder = paste(path.package("voltagefit"),"/extdata/",sep="") # path to wafters data directory
+#' fitted = fitall(wafers_folder)
+#' design = data.frame(week = c(1,1,1,1,2,2), wafer = unique(fitted$id), replicate = c(1:6), treatment = rep(1:6))
+#' fitman = fitmanova(fitted, design)
+#' underp = underparam(fitman)
+#' unders = undercurvesim(underp)
+#' underc = curves(fitted, unders)
+#' plotunder(fitted, underc)
+#' @import matrixStats
+#'
+#' @export
+plotunder = function(fitted, underc, orig=T, med=F){
+  v = attr(fitted,"v")
   tot_f = which(diff(v) < 0)[1]
   v_f = v[1:tot_f]
   v_b = v[tot_f:length(v)]
@@ -62,30 +81,30 @@ plotunder = function(fitall, curves, orig=T, med=F){
   on.exit(op)
   
   if (orig){
-    m = max(fitall$max) ## transformation to put back on original scale
-    curves$forward = exp(m / curves$forward)
-    curves$backward = exp(m / curves$backward)
+    m = max(fitted$max) ## transformation to put back on original scale
+    underc$forward = exp(m / underc$forward)
+    underc$backward = exp(m / underc$backward)
   }
-  limits = range(curves$backward, curves$forward)
+  limits = range(underc$backward, underc$forward)
   
   if(med){
     ## calculate median curve if required
-    means_f = colQuantiles(curves$forward, probs = 0.5)
-    means_b = colQuantiles(curves$backward, probs = 0.5)
+    means_f = colQuantiles(underc$forward, probs = 0.5)
+    means_b = colQuantiles(underc$backward, probs = 0.5)
     temp = c("Median", "95% Interval")
   }
   else{
     ## calculate mean curve if required
-    means_f = colMeans(curves$forward)
-    means_b = colMeans(curves$backward)
+    means_f = colMeans(underc$forward)
+    means_b = colMeans(underc$backward)
     temp = c("Mean", "95% Interval")
   }
   
   ## calculate 95% region of underlying curves
-  lower_f = colQuantiles(curves$forward, probs=0.025)
-  upper_f = colQuantiles(curves$forward, probs=0.975)
-  lower_b = colQuantiles(curves$backward, probs=0.025)
-  upper_b = colQuantiles(curves$backward, probs=0.975)
+  lower_f = colQuantiles(underc$forward, probs=0.025)
+  upper_f = colQuantiles(underc$forward, probs=0.975)
+  lower_b = colQuantiles(underc$backward, probs=0.025)
+  upper_b = colQuantiles(underc$backward, probs=0.975)
   
   plot(v_f, means_f, type = "l", xlab = "Vg (V)", ylab = "Id (A)", log = "y", 
        ylim = limits, main = ifelse(orig, "", "Transformed scale"), panel.first = grid())

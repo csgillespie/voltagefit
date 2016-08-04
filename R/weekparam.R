@@ -1,17 +1,22 @@
-## function to get parameters to create curves for each week
-## fm is of the form, fitmanova
-##
-## the function returns a data frame looking like
-##   direction week         X1         X2          X3         X4          X5          X6
-## 1   Forward    1 0.99225085 0.34297343 -0.95642961  1.7080048 -0.60900038  0.10555078
-## 2   Forward    2 0.98700323 0.32394634 -0.08862228  1.0466092 -0.30680664  0.05753791
-## 3  Backward    1 0.03496712 0.02715283 -0.49391182 -0.3998133  0.35780175 -0.07398364
-## 4  Backward    2 0.01187002 0.02869879 -0.52432629  0.1861148  0.02938187 -0.02054951
-##
-## direction = whether it is the forward or backward curve
-## week = the week the curve corresponds to
-## X1 - X6 = the parameters characterising the (week) curves
-
+#' Calculate parameters for creating curves for each week
+#'
+#' Calculate parameters for creating curves for each week
+#'
+#' @param fm        Fitted manova list as output by \code{\link{fitmanova}}.
+#' 
+#' @return A data.frame consisting of the fields:\cr
+#'   direction - Forward or backward curve.\cr
+#'   week  - The week to which the curve corresponds.\cr
+#'   X1 ... X6 = The parameters characterising the week curves.\cr
+#'
+#' @examples
+#' wafers_folder = paste(path.package("voltagefit"),"/extdata/",sep="") # path to wafters data directory
+#' fitted = fitall(wafers_folder)
+#' design = data.frame(week = c(1,1,1,1,2,2), wafer = unique(fitted$id), replicate = c(1:6), treatment = rep(1:6))
+#' fitman = fitmanova(fitted, design)
+#' weekp = weekparam(fitman)
+#'
+#' @export
 weekparam = function(fm){
   param_f = matrix(0, nrow = length(fm$forward$man_w$xlevels$`factor(week)`), 
                    ncol = ncol(fm$forward$man_w$coefficients)) 

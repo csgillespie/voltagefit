@@ -1,18 +1,22 @@
-## function to get parameters to create underlying curve
-## fm is of the form, fitmanova
-##
-## the function returns a list with elements param and var
-## param is a data frame
-##  direction         X1         X2         X3         X4         X5          X6
-## 1   Forward 0.98962704 0.33345989 -0.5225259  1.3773070 -0.4579035  0.08154434
-## 2  Backward 0.02341857 0.02792581 -0.5091191 -0.1068493  0.1935918 -0.04726657
-##
-## direction = whether it is the forward or backward curve
-## X1 - X6 = the parameters characterising the (week) curves
-##
-## var is a list with elements forward and backward, with each 
-## containing the covariance matrix (for use in undercurvesim)
-
+#' Calculate parameters for creating the underlying curve
+#'
+#' Calculate parameters for creating the underlying curve
+#'
+#' @param fm    Fitted manova list as output by \code{\link{fitmanova}}.
+#' 
+#' @return A list with elements param and var.\cr\cr
+#'   param - A data.frame consisting of the fields:\cr
+#'   direction - Forward or backward curve.\cr
+#'   X1 ... X6 - The parameters characterising the week curves.\cr\cr
+#'   var - A list with elements forward and backward, each containing the covariance matrix for use in \code{\link{undercurvesim}}.
+#' @examples
+#' wafers_folder = paste(path.package("voltagefit"),"/extdata/",sep="") # path to wafters data directory
+#' fitted = fitall(wafers_folder)
+#' design = data.frame(week = c(1,1,1,1,2,2), wafer = unique(fitted$id), replicate = c(1:6), treatment = rep(1:6))
+#' fitman = fitmanova(fitted, design)
+#' underp = underparam(fitman)
+#'
+#' @export
 underparam = function(fm)
 {
   t_all_f = fm$forward$man_w$coefficients[1,]  ## get underlying parameters form MANOVA
@@ -35,25 +39,31 @@ underparam = function(fm)
 }
 
 
-## function to create sample used for underlying curves
-##
-## underparam is of the form, underparam
-## n is the number of samples required
-## 
-## the function returns a data frame
-##   direction        X1        X2         X3       X4         X5         X6
-## 1   Forward 0.9830902 0.3333241 -0.5907498 1.474182 -0.5081067 0.09033372
-## 2   Forward 0.9935583 0.3314643 -0.2409134 1.113279 -0.3506499 0.06711141
-## 3   Forward 0.9879220 0.3325370 -0.3994582 1.265018 -0.4056076 0.07313676
-##
-## direction = whether it is the forward or backward curve
-## X1 - X6 = the parameters characterising the curves
 
-undercurvesim = function(underparam, n=1000)
+#' Create sample used for underlying curves
+#'
+#' Create sample used for underlying curves
+#'
+#' @param underp    Data.frame as output by \code{\link{underparam}}.
+#' @param n    Number of samples required (default=1000).
+#' 
+#' @return A data.frame consisting of the fields:\cr
+#'   direction - Forward or backward curve.\cr
+#'   X1 ... X6 - The parameters characterising the curves.
+#' @examples
+#' wafers_folder = paste(path.package("voltagefit"),"/extdata/",sep="") # path to wafters data directory
+#' fitted = fitall(wafers_folder)
+#' design = data.frame(week = c(1,1,1,1,2,2), wafer = unique(fitted$id), replicate = c(1:6), treatment = rep(1:6))
+#' fitman = fitmanova(fitted, design)
+#' underp = underparam(fitman)
+#' undercurvesim(underp)
+#'
+#' @export
+undercurvesim = function(underp, n=1000)
 {
   ## generate sample from multivariate Normal
-  t_f_sim = mvrnorm(n, as.numeric(underparam$param[underparam$param$direction=="Forward",][,2:7]), underparam$var$forward)
-  t_b_sim = mvrnorm(n, as.numeric(underparam$param[underparam$param$direction=="Backward",][,2:7]), underparam$var$backward)
+  t_f_sim = mvrnorm(n, as.numeric(underp$param[underp$param$direction=="Forward",][,2:7]), underp$var$forward)
+  t_b_sim = mvrnorm(n, as.numeric(underp$param[underp$param$direction=="Backward",][,2:7]), underp$var$backward)
   
   forward = data.frame(direction="Forward", t_f_sim)
   backward = data.frame(direction="Backward", t_b_sim)
