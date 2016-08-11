@@ -10,7 +10,8 @@
 #' fitted = fitwafer(wafer3737)
 #' histplot(fitted)
 #'
-#' @import graphics
+#'@importFrom graphics grid hist legend lines mtext par plot
+#'
 #' @export
 histplot = function(fitted){
   op = par(mar = c(3, 3, 2, 1), mgp = c(2, 0.4, 0), tck = -.01, cex.axis = 0.9, las = 1)

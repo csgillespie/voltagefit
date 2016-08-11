@@ -19,7 +19,7 @@ A data.frame consisting of the fields:\cr
 Calculate parameters for creating curves for each week
 }
 \examples{
-wafers_folder = paste(path.package("voltagefit"),"/extdata/",sep="") # path to wafters data directory
+wafers_folder = paste(path.package("voltagefit"),"/extdata/",sep="") # path to wafers data directory
 fitted = fitall(wafers_folder)
 design = data.frame(week = c(1,1,1,1,2,2), wafer = unique(fitted$id), replicate = c(1:6), treatment = rep(1:6))
 fitman = fitmanova(fitted, design)

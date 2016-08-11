@@ -60,7 +60,7 @@ plotweek = function(fitted, wcurves, fm, orig=TRUE){
 #' 
 #' @return None. This function produces a plot.
 #' @examples
-#' wafers_folder = paste(path.package("voltagefit"),"/extdata/",sep="") # path to wafters data directory
+#' wafers_folder = paste(path.package("voltagefit"),"/extdata/",sep="") # path to wafers data directory
 #' fitted = fitall(wafers_folder)
 #' design = data.frame(week = c(1,1,1,1,2,2), wafer = unique(fitted$id), replicate = c(1:6), treatment = rep(1:6))
 #' fitman = fitmanova(fitted, design)
@@ -68,7 +68,8 @@ plotweek = function(fitted, wcurves, fm, orig=TRUE){
 #' unders = undercurvesim(underp)
 #' underc = curves(fitted, unders)
 #' plotunder(fitted, underc)
-#' @import matrixStats
+#' 
+#' @importFrom matrixStats colQuantiles
 #'
 #' @export
 plotunder = function(fitted, underc, orig=T, med=F){

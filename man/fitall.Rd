@@ -29,7 +29,7 @@ any wafer entering this function (and subsequently fitwafer) has been pre-filter
 See the function "filtered" for details of how wafers are filtered.
 }
 \examples{
-wafers_folder = paste(path.package("voltagefit"),"/extdata/",sep="") # path to wafters data directory
+wafers_folder = paste(path.package("voltagefit"),"/extdata/",sep="") # path to wafers data directory
 fit = fitall(wafers_folder)
 
 }

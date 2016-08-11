@@ -24,7 +24,7 @@ N.B. using the mean with low levels of data can lead to spurious curves,
 the median appears to be more stable!
 }
 \examples{
-wafers_folder = paste(path.package("voltagefit"),"/extdata/",sep="") # path to wafters data directory
+wafers_folder = paste(path.package("voltagefit"),"/extdata/",sep="") # path to wafers data directory
 fitted = fitall(wafers_folder)
 design = data.frame(week = c(1,1,1,1,2,2), wafer = unique(fitted$id), replicate = c(1:6), treatment = rep(1:6))
 fitman = fitmanova(fitted, design)
@@ -32,5 +32,6 @@ underp = underparam(fitman)
 unders = undercurvesim(underp)
 underc = curves(fitted, unders)
 plotunder(fitted, underc)
+
 }
 

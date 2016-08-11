@@ -20,7 +20,10 @@
 #' @examples
 #' fitwafer(wafer3737)
 #'
-#' @import stringi nlme MASS stats
+#' @importFrom stringi stri_rand_strings
+#' @importFrom stats lm manova nlm vcov
+#' @importFrom MASS mvrnorm
+#' 
 #' @export
 fitwafer = function(wafer, iterlim=2000, id=NULL){
   if (is.null(id)){
@@ -95,7 +98,7 @@ fitwafer = function(wafer, iterlim=2000, id=NULL){
 #'   The attribute v (voltage gate readings for one device), used in curve functions and plotting functions, is appended.
 #'
 #' @examples
-#' wafers_folder = paste(path.package("voltagefit"),"/extdata/",sep="") # path to wafters data directory
+#' wafers_folder = paste(path.package("voltagefit"),"/extdata/",sep="") # path to wafers data directory
 #' fit = fitall(wafers_folder)
 #'
 #' @export
