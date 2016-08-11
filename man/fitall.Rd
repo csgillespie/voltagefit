@@ -9,7 +9,7 @@ fitall(path, iterlim = 2000)
 \arguments{
 \item{path}{Directory where multiple .rds files, each containing a single wafer, are located}
 
-\item{iterlim}{Maxiumum number of iterations to use in nlm (default=2000).}
+\item{iterlim}{Maxiumum number of iterations to use in nlm (Default: 2000).}
 }
 \value{
 A data.frame consisting of the fields:\cr

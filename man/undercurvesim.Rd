@@ -9,7 +9,7 @@ undercurvesim(underp, n = 1000)
 \arguments{
 \item{underp}{Data.frame as output by \code{\link{underparam}}.}
 
-\item{n}{Number of samples required (default=1000).}
+\item{n}{Number of samples required (Default: 1000).}
 }
 \value{
 A data.frame consisting of the fields:\cr

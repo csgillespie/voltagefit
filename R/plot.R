@@ -2,10 +2,10 @@
 #'
 #' Plot curves for each week
 #'
-#' @param fitted    Fitted data.frame as given by \code{\link{fitwafer}}.
+#' @inheritParams   fitmanova
+#' @inheritParams   plotunder
 #' @param wcurves   Week curves as given by \code{\link{curves}}.
 #' @param fm        Fitted manova as given by \code{\link{fitmanova}}.
-#' @param orig      Boolean value deciding whether the plot should be on the original data scale or the transformed scale (Default: TRUE) 
 #' 
 #' @return None. This function produces a plot.
 #' @examples
@@ -52,11 +52,11 @@ plotweek = function(fitted, wcurves, fm, orig=TRUE){
 #' Plot underlying curve
 #' N.B. using the mean with low levels of data can lead to spurious curves, 
 #' the median appears to be more stable!
-#'
-#' @param fitted    Fitted data.frame as given by \code{\link{fitwafer}}.
-#' @param underc   Underlying curve as given by \code{\link{curves}}.
-#' @param orig      Boolean value deciding whether the plot should be on the original data scale or the transformed scale (Default: TRUE) 
+#' 
+#' @inheritParams   fitmanova
+#' @param underc    Underlying curve as given by \code{\link{curves}}.
 #' @param med       Boolean value deciding whether the whether the median should be used rather than mean (Default: FALSE)
+#' @param orig      Boolean value deciding whether the plot should be on the original data scale or the transformed scale (Default: TRUE)
 #' 
 #' @return None. This function produces a plot.
 #' @examples

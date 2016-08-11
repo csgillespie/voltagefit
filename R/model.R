@@ -4,9 +4,9 @@
 #' It is assumed that any wafer entering this function has been pre-filtered. 
 #' See the function "filtered" for details of how wafers are filtered.
 #'
-#' @param wafer   Data from a single wafer.
-#' @param iterlim   Maxiumum number of iterations to use in nlm (default=2000).
-#' @param id Wafer  ID (Optional - if absent a random string is generated as the ID).
+#' @param wafer     Data from a single wafer.
+#' @param iterlim   Maxiumum number of iterations to use in nlm (Default: 2000).
+#' @param id        WaferID (Default: A random string is generated as the ID).
 #' 
 #' @return A data.frame consisting of the fields:\cr
 #'   id - wafer id\cr
@@ -84,8 +84,8 @@ fitwafer = function(wafer, iterlim=2000, id=NULL){
 #' any wafer entering this function (and subsequently fitwafer) has been pre-filtered. 
 #' See the function "filtered" for details of how wafers are filtered.
 #'
-#' @param path  Directory where multiple .rds files, each containing a single wafer, are located
-#' @param iterlim   Maxiumum number of iterations to use in nlm (default=2000).
+#' @inheritParams  fitwafer
+#' @param path     Directory where multiple .rds files, each containing a single wafer, are located
 #' 
 #' @return A data.frame consisting of the fields:\cr
 #'   id - wafer id\cr

@@ -2,7 +2,7 @@
 #'
 #' Calculate parameters for creating curves for each week
 #'
-#' @param fm        Fitted manova list as output by \code{\link{fitmanova}}.
+#' @param fm    Fitted manova list as output by \code{\link{fitmanova}}.
 #' 
 #' @return A data.frame consisting of the fields:\cr
 #'   direction - Forward or backward curve.\cr

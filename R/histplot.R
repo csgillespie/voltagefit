@@ -2,7 +2,7 @@
 #'
 #' Function to plot histograms of fitted wafer curve parameters and cost function for both forward and backwards curves
 #'
-#' @param fitted    Fitted data.frame as given by \code{\link{fitwafer}}.
+#' @inheritParams fitmanova
 #' 
 #' @return None
 #'
@@ -10,7 +10,7 @@
 #' fitted = fitwafer(wafer3737)
 #' histplot(fitted)
 #'
-#'@importFrom graphics grid hist legend lines mtext par plot
+#' @importFrom graphics grid hist legend lines mtext par plot
 #'
 #' @export
 histplot = function(fitted){

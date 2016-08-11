@@ -2,10 +2,11 @@
 #'
 #' Function to create curves
 #'
-#' @param fitted   Fitted data.frame as given by \code{\link{fitwafer}}.
-#' @param param    Samples as given by \code{\link{undercurvesim}} or \code{\link{weekparam}}.
+#' @inheritParams fitmanova
+#' @param param   Samples as given by \code{\link{undercurvesim}} or \code{\link{weekparam}}.
 #' 
 #' @return A list containing elements forward and backward, each containing the curves for each week (one curve per row).
+#' 
 #' @examples
 #' wafers_folder = paste(path.package("voltagefit"),"/extdata/",sep="") # path to wafers data directory
 #' fitted = fitall(wafers_folder)

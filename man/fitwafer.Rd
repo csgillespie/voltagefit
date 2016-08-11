@@ -9,9 +9,9 @@ fitwafer(wafer, iterlim = 2000, id = NULL)
 \arguments{
 \item{wafer}{Data from a single wafer.}
 
-\item{iterlim}{Maxiumum number of iterations to use in nlm (default=2000).}
+\item{iterlim}{Maxiumum number of iterations to use in nlm (Default: 2000).}
 
-\item{id}{Wafer  ID (Optional - if absent a random string is generated as the ID).}
+\item{id}{WaferID (Default: A random string is generated as the ID).}
 }
 \value{
 A data.frame consisting of the fields:\cr

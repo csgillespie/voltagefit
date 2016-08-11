@@ -2,11 +2,12 @@
 #'
 #' Perform the MANOVA parts of the analysis
 #'
-#' @param data   The data frame of parameter values, appended with week and treatment type for each device 
-## TREATMENT NEEDS TO BE INCORPORATED!!! HOW?????
-#' @param weight  The weights to be used in the MANOVA, (applied as 1/weight).
+#' @param data     The data frame of parameter values, appended with week and treatment type for each device 
+#' @param weight   The weights to be used in the MANOVA, (applied as 1/weight).
 #' 
 #' @return A list, a MANOVA class item (incorporating weights) and the output of vcov (without weights).
+#' 
+## TREATMENT NEEDS TO BE INCORPORATED!!! HOW?????
 ## N.B. vcov does not work on output which incorporates weights,
 ## the use of vcov helps with correlation structure when simulating 
 ## values for the underlying curve (otherwise odd curves were evident 

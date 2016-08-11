@@ -2,13 +2,14 @@
 #'
 #' Calculate parameters for creating the underlying curve
 #'
-#' @param fm    Fitted manova list as output by \code{\link{fitmanova}}.
+#' @inheritParams weekparam
 #' 
 #' @return A list with elements param and var.\cr\cr
 #'   param - A data.frame consisting of the fields:\cr
 #'   direction - Forward or backward curve.\cr
 #'   X1 ... X6 - The parameters characterising the week curves.\cr\cr
 #'   var - A list with elements forward and backward, each containing the covariance matrix for use in \code{\link{undercurvesim}}.
+#'   
 #' @examples
 #' wafers_folder = paste(path.package("voltagefit"),"/extdata/",sep="") # path to wafers data directory
 #' fitted = fitall(wafers_folder)
@@ -45,11 +46,12 @@ underparam = function(fm)
 #' Create sample used for underlying curves
 #'
 #' @param underp    Data.frame as output by \code{\link{underparam}}.
-#' @param n    Number of samples required (default=1000).
+#' @param n         Number of samples required (Default: 1000).
 #' 
 #' @return A data.frame consisting of the fields:\cr
 #'   direction - Forward or backward curve.\cr
 #'   X1 ... X6 - The parameters characterising the curves.
+#'   
 #' @examples
 #' wafers_folder = paste(path.package("voltagefit"),"/extdata/",sep="") # path to wafers data directory
 #' fitted = fitall(wafers_folder)
