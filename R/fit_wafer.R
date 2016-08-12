@@ -1,8 +1,9 @@
-#' Fit logcurve to a wafer
+#' Fit logcurves to a wafer
 #'
-#' Fits logcurves to a wafer and returns the parameters and cost for both forward and backwards curves. 
-#' It is assumed that any wafer entering this function has been pre-filtered. 
-#' See the function "filtered" for details of how wafers are filtered.
+#' Fits logcurves to a wafer and returns the curve parameters and resulting
+#' cost for both forward and backwards curves. It is assumed that any wafer
+#' entering this function has been pre-filtered. See the function "filtered"
+#' for details of how wafers are filtered.
 #'
 #' @param wafer     Data from a single wafer.
 #' @param iterlim   Maxiumum number of iterations to use in nlm (Default: 2000).
@@ -19,18 +20,17 @@
 #'   }
 #'
 #' @examples
-#' fitwafer(wafer3737)
+#' fit_wafer(wafer3737)
 #'
 #' @importFrom stringi stri_rand_strings
 #' @importFrom stats lm manova nlm vcov
 #' @importFrom MASS mvrnorm
 #' 
 #' @export
-fitwafer = function(wafer, iterlim=2000, id=NULL){
+fit_wafer = function(wafer, iterlim=2000, id=NULL){
   if (is.null(id)){
     id = stri_rand_strings(1, 5)  ## check wafer has an id, if not generate one
-  } 
-  else{
+  } else {
     id = gsub(".rds","",id)
   }
   
@@ -42,8 +42,7 @@ fitwafer = function(wafer, iterlim=2000, id=NULL){
   estb = estf
 
   place = 0  
-  for (i in unique(wafer$name)) ## iterate through each device on the wafer
-  {
+  for (i in unique(wafer$name)){ ## iterate through each device on the wafer
     place = place + 1
     d = wafer[wafer$name==i,]  ## get the data for the device
     
@@ -52,21 +51,21 @@ fitwafer = function(wafer, iterlim=2000, id=NULL){
     
     #forwards
     ## fit the model to the forward pass, fitted to transformed data to improve fit
-    m.nlmf = nlm(minlogcurve, c(1.0, 1.4, -3, 4, -1.5, 0.3), d_forward$VG,
+    m.nlmf = nlm(min_logcurve, c(1.0, 1.4, -3, 4, -1.5, 0.3), d_forward$VG,
                  max(log(abs(d_forward$ID))) / log(abs(d_forward$ID)), iterlim = iterlim) 
     estf[place,1:6] = m.nlmf$estimate  ## store parameters 
     ## warning if the model doesn't fit within the specified iterations 
     if(m.nlmf$iterations==iterlim) message(paste("Max reached for forward, device ",i))
     ## calculate the final cost and store
-    estf[place,7] = minlogcurve(m.nlmf$estimate, d_forward$VG,
+    estf[place,7] = min_logcurve(m.nlmf$estimate, d_forward$VG,
                                max(log(abs(d_forward$ID))) / log(abs(d_forward$ID)))
     
     #backwards (as above but for backwards pass)
-    m.nlmb = nlm(minlogcurveb, c(0.01, 0.01, 0.01, 0.01, 0.01, 0.01), d_backward$VG,
+    m.nlmb = nlm(min_logcurve_back, c(0.01, 0.01, 0.01, 0.01, 0.01, 0.01), d_backward$VG,
                  max(log(abs(d_backward$ID))) / log(abs(d_backward$ID)), m.nlmf$estimate, iterlim = iterlim)
     estb[place,1:6] = m.nlmb$estimate
     if(m.nlmb$iterations==iterlim) message(paste("Max reached for backward, device ",i))
-    estb[place,7] = minlogcurveb(m.nlmb$estimate, d_backward$VG,
+    estb[place,7] = min_logcurve_back(m.nlmb$estimate, d_backward$VG,
                                 max(log(abs(d_backward$ID))) / log(abs(d_backward$ID)), m.nlmf$estimate)
   }
   ## combine into data.frame
@@ -78,15 +77,16 @@ fitwafer = function(wafer, iterlim=2000, id=NULL){
   return(rbind(forward,backward))
 }
 
-#' Fit logcurve to multiple wafers
+#' Fit logcurves to multiple wafers
 #'
-#' Fits logcurves to multiple wafers, given in a directory, and returns the parameters and cost 
-#' for both forward and backwards curves. An extended version of fitwafer. It is assumed that 
-#' any wafer entering this function (and subsequently fitwafer) has been pre-filtered. 
-#' See the function "filtered" for details of how wafers are filtered.
+#' Fits logcurves to multiple wafers in a directory, and returns the parameters
+#' and cost for both forward and backwards curves. This is an extended version
+#' of \code{\link{fit_wafer}}. It is assumed that any wafer entering this
+#' function (and subsequently fit_wafer) has been pre-filtered. See the function
+#' "filtered" for details of how wafers are filtered.
 #'
-#' @inheritParams  fitwafer
-#' @param path     Directory where multiple .rds files, each containing a single wafer, are located
+#' @inheritParams  fit_wafer
+#' @param path     Directory containing multiple .rds files, each containing a single wafer
 #' 
 #' @return A data.frame consisting of the fields:
 #'   \describe{
@@ -97,27 +97,27 @@ fitwafer = function(wafer, iterlim=2000, id=NULL){
 #'      \item{direction}{Whether the curve direction is forward or backward}
 #'      \item{X1 ... X6}{The parameters characterising the curve}
 #'   }
-#'   The attribute v (voltage gate readings for one device), used in curve functions and plotting functions, is also appended.
+#'   The attribute v (voltage gate readings for one device), used in curve
+#'   functions and plotting functions, is also appended.
 #'
 #' @examples
 #' wafers_folder = file.path(path.package("voltagefit"),"extdata") # path to wafers data directory
-#' fit = fitall(wafers_folder)
+#' fit = fit_all(wafers_folder)
 #'
 #' @export
-fitall = function(path, iterlim=2000){
+fit_all = function(path, iterlim=2000){
   files = list.files(path = path, pattern = ".rds") ## get files to read
-  message("files read: ",paste(files,collapse=" "))
+  message("Files found: ",paste(files,collapse=" "))
   
   for(i in 1:length(files)){
     wafer = readRDS(file.path(path, files[i])) ## read a file/wafer
-    message("wafer: ",files[i])
-    fit = fitwafer(wafer, iterlim, files[i]) ## fit model to that wafer
+    message("Reading: ",files[i])
+    fit = fit_wafer(wafer, iterlim, files[i]) ## fit model to that wafer
     
     if(i==1){
       param = fit
       v = wafer[wafer$name==unique(wafer$name)[1],]$VG ## get v_gate reading, used in later functions and plotting
-    }
-    else{
+    } else {
       param = rbind(param, fit)
     }
   }

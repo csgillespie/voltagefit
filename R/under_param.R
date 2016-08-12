@@ -1,27 +1,28 @@
-#' Calculate parameters for creating the underlying curve
+#' Calculate underlying curve parameters
 #'
-#' Calculate parameters for creating the underlying curve
-#'
-#' @inheritParams weekparam
+#' Calculates the parameters and covariance matrix that charactarises
+#' both the forward and backward underlying curves, using a fitted manova
+#' provided by \code{\link{fit_manova}}.
+#' 
+#' @inheritParams week_param
 #' 
 #' @return A list with elements \code{param} and \code{var}, where param is a data.frame consisting of the fields:
 #'   \describe{
 #'      \item{direction}{Whether the curve direction is forward or backward}
 #'      \item{X1 ... X6}{The parameters characterising the curve}
 #'   }
-#'   and \code{var} is a list with elements forward and backward, each containing the covariance matrix for use in \code{\link{undercurvesim}}.
+#'   and \code{var} is a list with elements forward and backward, each containing the covariance matrix for use in \code{\link{sample_under_param}}.
 #'   
 #' @examples
 #' wafers_folder = file.path(path.package("voltagefit"),"extdata") # path to wafers data directory
-#' fitted = fitall(wafers_folder)
+#' fitted = fit_all(wafers_folder)
 #' design = data.frame(week = c(1,1,1,1,2,2), wafer = unique(fitted$id), replicate = 1:6, treatment = rep(1,6))
-#' fitman = fitmanova(fitted, design)
-#' underp = underparam(fitman)
+#' fitman = fit_manova(fitted, design)
+#' underp = under_param(fitman)
 #'
 #' @export
-underparam = function(fm)
-{
-  t_all_f = fm$forward$man_w$coefficients[1,]  ## get underlying parameters form MANOVA
+under_param = function(fm){
+  t_all_f = fm$forward$man_w$coefficients[1,]  ## get underlying parameters from MANOVA
   t_all_b = fm$backward$man_w$coefficients[1,]
 
   loc = 1 + (0:5)*(length(fm$forward$man_w$xlevels$`factor(week)`))  ## index which elements in vcov we require
@@ -40,13 +41,13 @@ underparam = function(fm)
   return(list(param = rbind(forward, backward), var = list(forward = t_vmat_f, backward = t_vmat_b)))
 }
 
-
-
-#' Create sample used for underlying curves
+#' Sample underlying curve parameters
 #'
-#' Create sample used for underlying curves
+#' Generate sample forward and backward underlying curve parameters,
+#' using the underlying curve parameters and covariance matrix given
+#' by \code{\link{under_param}}.
 #'
-#' @param underp    Data.frame as output by \code{\link{underparam}}.
+#' @param underp    Data.frame as output by \code{\link{under_param}}.
 #' @param n         Number of samples required (Default: 1000).
 #' 
 #' @return A data.frame consisting of the fields:
@@ -57,15 +58,14 @@ underparam = function(fm)
 #'   
 #' @examples
 #' wafers_folder = file.path(path.package("voltagefit"),"extdata") # path to wafers data directory
-#' fitted = fitall(wafers_folder)
+#' fitted = fit_all(wafers_folder)
 #' design = data.frame(week = c(1,1,1,1,2,2), wafer = unique(fitted$id), replicate = 1:6, treatment = rep(1,6))
-#' fitman = fitmanova(fitted, design)
-#' underp = underparam(fitman)
-#' undercurvesim(underp)
+#' fitman = fit_manova(fitted, design)
+#' underp = under_param(fitman)
+#' sample_under_param(underp)
 #'
 #' @export
-undercurvesim = function(underp, n=1000)
-{
+sample_under_param = function(underp, n=1000){
   ## generate sample from multivariate Normal
   t_f_sim = mvrnorm(n, as.numeric(underp$param[underp$param$direction=="Forward",][,2:7]), underp$var$forward)
   t_b_sim = mvrnorm(n, as.numeric(underp$param[underp$param$direction=="Backward",][,2:7]), underp$var$backward)

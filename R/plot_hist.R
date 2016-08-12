@@ -1,19 +1,20 @@
 #' Plot histograms of fitted wafer curve parameters and cost function
 #'
-#' Function to plot histograms of fitted wafer curve parameters and cost function for both forward and backwards curves
+#' Plots several histograms, showing the parameters and cost function resulting
+#' from the fitting of forward and backwards curves to wafers.
 #'
-#' @inheritParams fitmanova
+#' @inheritParams fit_manova
 #' 
-#' @return None
+#' @return None. This function produces a plot.
 #'
 #' @examples
-#' fitted = fitwafer(wafer3737)
-#' histplot(fitted)
+#' fitted = fit_wafer(wafer3737)
+#' plot_hist(fitted)
 #'
 #' @importFrom graphics grid hist legend lines mtext par plot
 #'
 #' @export
-histplot = function(fitted){
+plot_hist = function(fitted){
   op = par(mar = c(3, 3, 2, 1), mgp = c(2, 0.4, 0), tck = -.01, cex.axis = 0.9, las = 1)
   on.exit(op)
   
