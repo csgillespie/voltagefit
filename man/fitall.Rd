@@ -12,15 +12,16 @@ fitall(path, iterlim = 2000)
 \item{iterlim}{Maxiumum number of iterations to use in nlm (Default: 2000).}
 }
 \value{
-A data.frame consisting of the fields:\cr
-  id - wafer id\cr
-  name - each device on the wafer\cr
-  max - maximum of log(abs(wafer$ID))\cr
-  ID = current drain\cr
-  cost - the value of costfun for each device\cr
-  direction - whether it is the forward or backward curve\cr
-  X1 ... X6 - the parameters characterising the curves\cr\cr
-  The attribute v (voltage gate readings for one device), used in curve functions and plotting functions, is appended.
+A data.frame consisting of the fields:
+  \describe{
+     \item{id}{Wafer ID}
+     \item{name}{Each device on the wafer}
+     \item{max}{Maximum of \code{log(abs(ID))}, where \code{ID} is the current drain data taken from \code{wafer}}
+     \item{cost}{The value of the cost function for each device}
+     \item{direction}{Whether the curve direction is forward or backward}
+     \item{X1 ... X6}{The parameters characterising the curve}
+  }
+  The attribute v (voltage gate readings for one device), used in curve functions and plotting functions, is also appended.
 }
 \description{
 Fits logcurves to multiple wafers, given in a directory, and returns the parameters and cost 
@@ -29,7 +30,7 @@ any wafer entering this function (and subsequently fitwafer) has been pre-filter
 See the function "filtered" for details of how wafers are filtered.
 }
 \examples{
-wafers_folder = paste(path.package("voltagefit"),"/extdata/",sep="") # path to wafers data directory
+wafers_folder = file.path(path.package("voltagefit"),"extdata") # path to wafers data directory
 fit = fitall(wafers_folder)
 
 }

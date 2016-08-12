@@ -4,15 +4,17 @@
 #'
 #' @param fm    Fitted manova list as output by \code{\link{fitmanova}}.
 #' 
-#' @return A data.frame consisting of the fields:\cr
-#'   direction - Forward or backward curve.\cr
-#'   week  - The week to which the curve corresponds.\cr
-#'   X1 ... X6 = The parameters characterising the week curves.\cr
-#'
+#' @return A data.frame consisting of the fields:
+#'   \describe{
+#'      \item{direction}{Whether the curve direction is forward or backward}
+#'      \item{week}{The week to which the curve corresponds}
+#'      \item{X1 ... X6}{The parameters characterising the week curve}
+#'   }
+#'   
 #' @examples
-#' wafers_folder = paste(path.package("voltagefit"),"/extdata/",sep="") # path to wafers data directory
+#' wafers_folder = file.path(path.package("voltagefit"),"extdata") # path to wafers data directory
 #' fitted = fitall(wafers_folder)
-#' design = data.frame(week = c(1,1,1,1,2,2), wafer = unique(fitted$id), replicate = c(1:6), treatment = rep(1:6))
+#' design = data.frame(week = c(1,1,1,1,2,2), wafer = unique(fitted$id), replicate = 1:6, treatment = rep(1,6))
 #' fitman = fitmanova(fitted, design)
 #' weekp = weekparam(fitman)
 #'

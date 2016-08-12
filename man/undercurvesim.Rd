@@ -12,17 +12,19 @@ undercurvesim(underp, n = 1000)
 \item{n}{Number of samples required (Default: 1000).}
 }
 \value{
-A data.frame consisting of the fields:\cr
-  direction - Forward or backward curve.\cr
-  X1 ... X6 - The parameters characterising the curves.
+A data.frame consisting of the fields:
+  \describe{
+     \item{direction}{Whether the curve direction is forward or backward}
+     \item{X1 ... X6}{The parameters characterising the curve}
+  }
 }
 \description{
 Create sample used for underlying curves
 }
 \examples{
-wafers_folder = paste(path.package("voltagefit"),"/extdata/",sep="") # path to wafers data directory
+wafers_folder = file.path(path.package("voltagefit"),"extdata") # path to wafers data directory
 fitted = fitall(wafers_folder)
-design = data.frame(week = c(1,1,1,1,2,2), wafer = unique(fitted$id), replicate = c(1:6), treatment = rep(1:6))
+design = data.frame(week = c(1,1,1,1,2,2), wafer = unique(fitted$id), replicate = 1:6, treatment = rep(1,6))
 fitman = fitmanova(fitted, design)
 underp = underparam(fitman)
 undercurvesim(underp)

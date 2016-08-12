@@ -3,9 +3,28 @@
 \docType{data}
 \name{wafer3737}
 \alias{wafer3737}
-\title{Voltage result from wafer 3737}
-\format{A data frame}
+\alias{wafer3757}
+\alias{wafer3758}
+\alias{wafer3759}
+\alias{wafer4464}
+\alias{wafer4465}
+\title{Voltage results from a single wafer}
+\format{A data frame consisting of the fields:
+  \itemize{             
+    \item  id
+    \item  ERF
+    \item  wafer_id
+    \item  name
+    \item  row
+    \item  col
+    \item  comments
+    \item  test_num
+    \item  test_date
+    \item  result
+    \item  VG
+    \item  ID
+  }}
 \description{
-Voltage result from wafer 3737
+Voltage results from a single wafer
 }
 

@@ -14,14 +14,15 @@ fitwafer(wafer, iterlim = 2000, id = NULL)
 \item{id}{WaferID (Default: A random string is generated as the ID).}
 }
 \value{
-A data.frame consisting of the fields:\cr
-  id - wafer id\cr
-  name - each device on the wafer\cr
-  max - maximum of log(abs(wafer$ID))\cr
-  ID = current drain\cr
-  cost - the value of costfun for each device\cr
-  direction - whether it is the forward or backward curve\cr
-  X1 ... X6 - the parameters characterising the curves\cr
+A data.frame consisting of the fields:
+  \describe{
+     \item{id}{Wafer ID}
+     \item{name}{Each device on the wafer}
+     \item{max}{Maximum of \code{log(abs(ID))}, where \code{ID} is the current drain data taken from \code{wafer}}
+     \item{cost}{The value of the cost function for each device}
+     \item{direction}{Whether the curve direction is forward or backward}
+     \item{X1 ... X6}{The parameters characterising the curve}
+  }
 }
 \description{
 Fits logcurves to a wafer and returns the parameters and cost for both forward and backwards curves. 

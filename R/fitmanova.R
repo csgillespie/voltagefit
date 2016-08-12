@@ -35,9 +35,9 @@ man = function(data, weight){
 #' weights and vcov (excluding weights).
 #'
 #' @examples
-#' wafers_folder = paste(path.package("voltagefit"),"/extdata/",sep="") # path to wafers data directory
+#' wafers_folder = file.path(path.package("voltagefit"),"extdata") # path to wafers data directory
 #' fitted = fitall(wafers_folder)
-#' design = data.frame(week = c(1,1,1,1,2,2), wafer = unique(fitted$id), replicate = c(1:6), treatment = rep(1:6))
+#' design = data.frame(week = c(1,1,1,1,2,2), wafer = unique(fitted$id), replicate = 1:6, treatment = rep(1,6))
 #' fitman = fitmanova(fitted, design)
 #'
 #' @export

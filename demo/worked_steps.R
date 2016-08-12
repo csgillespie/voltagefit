@@ -22,7 +22,7 @@ histplot(fit)
 ## make the design matrix, bespoke for each setup 
 week = c(1,1,1,1,2,2)
 wafer = unique(fit$id)
-replicate = c(1:6)
+replicate = 1:6
 treatment = rep(1,6)
 design = data.frame(week = week, wafer = wafer, replicate = replicate, treatment = treatment)
 ##   week wafer replicate treatment

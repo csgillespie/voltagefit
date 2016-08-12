@@ -8,14 +8,15 @@
 #' @param iterlim   Maxiumum number of iterations to use in nlm (Default: 2000).
 #' @param id        WaferID (Default: A random string is generated as the ID).
 #' 
-#' @return A data.frame consisting of the fields:\cr
-#'   id - wafer id\cr
-#'   name - each device on the wafer\cr
-#'   max - maximum of log(abs(wafer$ID))\cr
-#'   ID = current drain\cr
-#'   cost - the value of costfun for each device\cr
-#'   direction - whether it is the forward or backward curve\cr
-#'   X1 ... X6 - the parameters characterising the curves\cr
+#' @return A data.frame consisting of the fields:
+#'   \describe{
+#'      \item{id}{Wafer ID}
+#'      \item{name}{Each device on the wafer}
+#'      \item{max}{Maximum of \code{log(abs(ID))}, where \code{ID} is the current drain data taken from \code{wafer}}
+#'      \item{cost}{The value of the cost function for each device}
+#'      \item{direction}{Whether the curve direction is forward or backward}
+#'      \item{X1 ... X6}{The parameters characterising the curve}
+#'   }
 #'
 #' @examples
 #' fitwafer(wafer3737)
@@ -87,18 +88,19 @@ fitwafer = function(wafer, iterlim=2000, id=NULL){
 #' @inheritParams  fitwafer
 #' @param path     Directory where multiple .rds files, each containing a single wafer, are located
 #' 
-#' @return A data.frame consisting of the fields:\cr
-#'   id - wafer id\cr
-#'   name - each device on the wafer\cr
-#'   max - maximum of log(abs(wafer$ID))\cr
-#'   ID = current drain\cr
-#'   cost - the value of costfun for each device\cr
-#'   direction - whether it is the forward or backward curve\cr
-#'   X1 ... X6 - the parameters characterising the curves\cr\cr
-#'   The attribute v (voltage gate readings for one device), used in curve functions and plotting functions, is appended.
+#' @return A data.frame consisting of the fields:
+#'   \describe{
+#'      \item{id}{Wafer ID}
+#'      \item{name}{Each device on the wafer}
+#'      \item{max}{Maximum of \code{log(abs(ID))}, where \code{ID} is the current drain data taken from \code{wafer}}
+#'      \item{cost}{The value of the cost function for each device}
+#'      \item{direction}{Whether the curve direction is forward or backward}
+#'      \item{X1 ... X6}{The parameters characterising the curve}
+#'   }
+#'   The attribute v (voltage gate readings for one device), used in curve functions and plotting functions, is also appended.
 #'
 #' @examples
-#' wafers_folder = paste(path.package("voltagefit"),"/extdata/",sep="") # path to wafers data directory
+#' wafers_folder = file.path(path.package("voltagefit"),"extdata") # path to wafers data directory
 #' fit = fitall(wafers_folder)
 #'
 #' @export
@@ -107,7 +109,7 @@ fitall = function(path, iterlim=2000){
   message("files read: ",paste(files,collapse=" "))
   
   for(i in 1:length(files)){
-    wafer = readRDS(paste(path, files[i], sep="")) ## read a file/wafer
+    wafer = readRDS(file.path(path, files[i])) ## read a file/wafer
     message("wafer: ",files[i])
     fit = fitwafer(wafer, iterlim, files[i]) ## fit model to that wafer
     
