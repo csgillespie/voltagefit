@@ -1,34 +1,15 @@
 ## THIS FILE SHOULD BE USED LOCALLY TO DEMONSTRATE THE STEPS IN AN ANALYSIS
-
 ## Initially source the R files needed 
 
-source("R/helper.R")
-source("R/model.R")
-source("R/fitmanova.R")
-source("R/weekparam.R")
-source("R/underparam.R")
-source("R/curves.R")
-source("R/histplot.R")
-source("R/plot.R")
-source("R/demo.R")
-
-## load the required librarys
-#install.packages("nlme")
-#install.packages("MASS")
-#install.packages("matrixStats")
-#install.packages("stringi")
-
-library(nlme)
-library(MASS)
-library(matrixStats)
-library(stringi)
+## Fit the model to a single wafer
+## Here we fit to wafer3737
+fit = fit_wafer(wafer3737)
 
 ## Fit the model to all files in a directory
 ## Here we fit to two weeks of data
 ## Week 1: wafers = 3737,3757,3758,3759 (4 wafers)
 ## Week 2: wafer = 4464,4465 (2 wafers)
-fit = fitall("data/")
-
+fit = fit_all("inst/extdata/")
 
 ## If you wanted at this point you could run 
 ## curves(f,f)
@@ -36,12 +17,12 @@ fit = fitall("data/")
 ## N.B This would be the option if we only considered a single week
 
 ## look at the parameter values and cost function
-histplot(fit)
+plot_hist(fit)
 
 ## make the design matrix, bespoke for each setup 
 week = c(1,1,1,1,2,2)
 wafer = unique(fit$id)
-replicate = c(1:6)
+replicate = 1:6
 treatment = rep(1,6)
 design = data.frame(week = week, wafer = wafer, replicate = replicate, treatment = treatment)
 ##   week wafer replicate treatment
@@ -55,7 +36,7 @@ design = data.frame(week = week, wafer = wafer, replicate = replicate, treatment
 
 ## Fit MANOVA to the output of fit 
 ## (performing MANOVA with the parameter values as the response)
-fitman = fitmanova(fit, design)
+fitman = fit_manova(fit, design)
 
 
 ## look at the output of the MANOVA, using commands such as 
@@ -65,47 +46,47 @@ summary(fitman$backward$man_w)
 
 ## Calculate the week parameters (the parameters for each curve 
 ## corresponding to each week)
-weekp = weekparam(fitman)
+weekp = week_param(fitman)
 
 
 ## Calculate the underlying parameters (the parameters for the 
 ## underlying curve)
-underp = underparam(fitman)
+underp = under_param(fitman)
 
 
 ## Generate a sample of parameters for the underlying curve
-unders = undercurvesim(underp, 1000)
+unders = sample_under_param(underp)
 
 
 ## Calculate the week curves
-weekc = curves(fit, weekp)
+weekc = calc_curves(fit, weekp)
 
 
 ## Calculate the underlying curves (one from each in the sample)
-underc = curves(fit, unders)
+underc = calc_curves(fit, unders)
 
 
 ## Plot the week curves
 ## On transformed scale (on which model fit takes place)
-plotweek(fit, weekc, fitman, F)
+plot_week(fit, weekc, fitman, F)
 
 # On original scale
-plotweek(fit, weekc, fitman, T)
+plot_week(fit, weekc, fitman, T)
 
 
 ## Plot the underlying curve
 ## On transformed scale (on which model fit takes place)
 ## using the mean curve
-plotunder(fit, underc, F, F)
+plot_under(fit, underc, F, F)
 
 ## On transformed scale (on which model fit takes place)
 ## using the median curve
-plotunder(fit, underc, F, T)
+plot_under(fit, underc, F, T)
 
 # On original scale
 ## using the mean curve
-plotunder(fit, underc, T, F)
+plot_under(fit, underc, T, F)
 
 # On original scale
 ## using the median curve
-plotunder(fit, underc, T, T)
+plot_under(fit, underc, T, T)
