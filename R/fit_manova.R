@@ -50,7 +50,7 @@ fit_manova = function(fitted, design){
   ## calculate the week and treatment set up from the design matrix, 
   ## replicating for all devices on a wafer
   len = tapply(fitted[fitted$direction=="Forward",]$id,fitted[fitted$direction=="Forward",]$id, length)
-  week = rep(design[design$wafer==names(len),]$week, len)
+  week = rep(design[design$wafer == names(len),]$week, len)
   treatment = rep(design[design$wafer==names(len),]$treatment, len)
   
   ## combine with parameters

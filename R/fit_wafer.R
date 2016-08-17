@@ -74,7 +74,9 @@ fit_wafer = function(wafer, iterlim=2000, id=NULL){
   backward = data.frame(id = id, name = unique(wafer$name), max = max(log(abs(wafer$ID))), 
                         cost = estb[,7], direction = "Backward", estb[,1:6])
   
-  return(rbind(forward,backward))
+  results = rbind(forward, backward)
+  class(results) = c("wafer", class(results))
+  return(results)
 }
 
 #' Fit logcurves to multiple wafers
