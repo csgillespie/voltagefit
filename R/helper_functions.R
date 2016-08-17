@@ -12,7 +12,7 @@ logcurve = function(x, param){
 min_logcurve = function(x, datax, datay){
   #x is what will be used (changed) to minimise, i.e param values 
   z = logcurve(datax, x)
-  res = cost_fun(z,datay) 
+  res = cost_fun(z, datay) 
   sum(res[!is.nan(res)])
 }
 

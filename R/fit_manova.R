@@ -16,12 +16,13 @@
 #'
 param_manova = function(data, weight){
   ## fit MANOVA with weight
-  man_w = manova(data.matrix(data[,grep("X[0-9]+",colnames(data))]) ~ factor(week), data = data, weights = 1 / weight) 
+  man_w = manova(data.matrix(data[,grep("X[0-9]+",colnames(data))]) ~ factor(week) , 
+                 data = data, weights = 1 / weight) 
   ## calculate vcov (without weight)
-  varcov = vcov(lm(data.matrix(data[,grep("X[0-9]+",colnames(data))]) ~ factor(week), data = data))
+  varcov = vcov(lm(data.matrix(data[,grep("X[0-9]+",colnames(data))]) ~ factor(week), 
+                   data = data))
   return(list(man_w = man_w, varcov = varcov))
 }
-
 
 #' Perform MANOVA analysis using fitted curves
 #'
@@ -47,11 +48,15 @@ fit_manova = function(fitted, design){
   options(contrasts = c("contr.sum", "contr.sum")) ## set contrasts to be used in MANOVA
   on.exit(options(contrasts = op))
   
+  ## Order data frames to make life easy
+  design = design[order(design$wafer),]
+  fitted = fitted[order(fitted$id),]
+  
   ## calculate the week and treatment set up from the design matrix, 
   ## replicating for all devices on a wafer
-  len = tapply(fitted[fitted$direction=="Forward",]$id,fitted[fitted$direction=="Forward",]$id, length)
-  week = rep(design[design$wafer == names(len),]$week, len)
-  treatment = rep(design[design$wafer==names(len),]$treatment, len)
+  len = table(fitted$id)/2 # forward/backward
+  week = factor(rep(design[design$wafer == names(len),]$week, len))
+  treatment = factor(rep(design[design$wafer==names(len),]$treatment, len))
   
   ## combine with parameters
   fdata = data.frame(week = week, treatment = treatment, fitted[fitted$direction=="Forward",])
@@ -59,8 +64,8 @@ fit_manova = function(fitted, design){
   
   # HOW TO GET TREATMENT IN TO BELOW WITHOUT IT BREAKING!!!!
   
-  f = param_manova(fdata, fdata$cost) ## fit MANOVA to forward pass
-  b = param_manova(bdata, fdata$cost) ## fit MANOVA to backward pass
+  f = param_manova(fdata, weight = fdata$cost) ## fit MANOVA to forward pass
+  b = param_manova(bdata, weight = fdata$cost) ## fit MANOVA to backward pass
   
   return(list(forward = f, backward = b))
 }

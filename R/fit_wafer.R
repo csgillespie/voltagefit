@@ -33,6 +33,8 @@ fit_wafer = function(wafer, iterlim=2000, id=NULL){
   } else {
     id = gsub(".rds","",id)
   }
+
+#  id = unique(wafer$ERF)
   
   ## get total observations on a device and total number in the forward pass
   tot_obs = length(wafer[wafer$name==unique(wafer$name)[1],]$VG) 
@@ -40,7 +42,7 @@ fit_wafer = function(wafer, iterlim=2000, id=NULL){
   
   estf = matrix(0, nrow = dim(wafer)[1] / tot_obs, ncol = 7)
   estb = estf
-
+  i = unique(wafer$name)[1]
   place = 0  
   for (i in unique(wafer$name)){ ## iterate through each device on the wafer
     place = place + 1
@@ -70,9 +72,9 @@ fit_wafer = function(wafer, iterlim=2000, id=NULL){
   }
   ## combine into data.frame
   forward = data.frame(id = id, name = unique(wafer$name), max = max(log(abs(wafer$ID))), 
-                        cost = estf[,7], direction = "Forward", estf[,1:6])
+                        cost = estf[,7], direction = "Forward", estf[,1:6, drop=FALSE], drop=FALSE)
   backward = data.frame(id = id, name = unique(wafer$name), max = max(log(abs(wafer$ID))), 
-                        cost = estb[,7], direction = "Backward", estb[,1:6])
+                        cost = estb[,7], direction = "Backward", estb[,1:6, drop=FALSE], drop=FALSE)
   
   results = rbind(forward, backward)
   class(results) = c("wafer", class(results))
