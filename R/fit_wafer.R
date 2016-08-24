@@ -1,3 +1,36 @@
+
+#' @export
+add_forward_backward = function(wafer) {
+  i = unique(wafer$name)[1]
+  dd = NULL
+  for (i in unique(wafer$name)){ ## iterate through each device on the wafer
+    d = wafer[wafer$name==i,]  ## get the data for the device
+    tot_f = which(diff(wafer[wafer$name==i,]$VG) < 0)[1]
+    tot_obs = length(wafer[wafer$name==unique(wafer$name)[1],]$VG) 
+    d$direction = rep(c("Forward", "Backward"), c(tot_f-1, tot_obs - tot_f + 1))
+    dd = rbind(dd, d)
+  }
+  return(dd)
+}
+# wafer = wafer3737
+# 
+# dd = get_forward_backward(wafer3737)
+# 
+# library(ggplot2)
+# ggplot(d_forward) + geom_line(aes(VG, abs(ID), colour=name)) + 
+#   scale_y_log10()
+# 
+# plot(d_forward$VG,abs(d_forward$ID), log="y")
+# 
+# d_forward$ID
+# 
+# 
+# head(dd)
+# ggplot(subset(dd, direction=="Forward")) + geom_line(aes(VG, ID, colour=name)) + 
+#   scale_y_log10()
+# 
+
+
 #' Fit logcurves to a wafer
 #'
 #' Fits logcurves to a wafer and returns the curve parameters and resulting
@@ -23,58 +56,77 @@
 #' fit_wafer(wafer3737)
 #'
 #' @importFrom stringi stri_rand_strings
-#' @importFrom stats lm manova nlm vcov
+#' @importFrom stats lm manova vcov
 #' @importFrom MASS mvrnorm
+#' @importFrom stats coefficients optim weighted.mean
+#' @importFrom graphics axis
 #' 
 #' @export
-fit_wafer = function(wafer, iterlim=2000, id=NULL){
-  if (is.null(id)){
-    id = stri_rand_strings(1, 5)  ## check wafer has an id, if not generate one
-  } else {
-    id = gsub(".rds","",id)
-  }
-  
-  ## get total observations on a device and total number in the forward pass
-  tot_obs = length(wafer[wafer$name==unique(wafer$name)[1],]$VG) 
-  tot_f = which(diff(wafer[wafer$name==unique(wafer$name)[1],]$VG) < 0)[1]
-  
-  estf = matrix(0, nrow = dim(wafer)[1] / tot_obs, ncol = 7)
-  estb = estf
+fit_wafer = function(wafer, maxit=10000, verbose=TRUE){
+  wafer = add_forward_backward(wafer)
 
+  estf = matrix(0, nrow = length(unique(wafer$name)), ncol = 7)
+  estb = estf
+  i = unique(wafer$name)[1]
   place = 0  
+  cur_forward_pars = cur_backward_pars = c(1.0, 1.4, -3, 4, -1.5, 0.3)
+  cur_forward_pars = cur_backward_pars = c(-9.1123, -15.5432, 1.1966,
+                                           0.6834, -0.1843, 0.1418)
+  max_value = get_max_value()
   for (i in unique(wafer$name)){ ## iterate through each device on the wafer
+    if(verbose) message(i)
     place = place + 1
     d = wafer[wafer$name==i,]  ## get the data for the device
-    
-    d_forward = d[1:tot_f,]  ## get the forward pass
-    d_backward = d[tot_f:tot_obs,]  ## get the backward pass
-    
+    #d = d[d$VG > -1, ]
+    d_forward = d[d$direction == "Forward",]  
+
     #forwards
     ## fit the model to the forward pass, fitted to transformed data to improve fit
-    m.nlmf = nlm(min_logcurve, c(1.0, 1.4, -3, 4, -1.5, 0.3), d_forward$VG,
-                 max(log(abs(d_forward$ID))) / log(abs(d_forward$ID)), iterlim = iterlim) 
-    estf[place,1:6] = m.nlmf$estimate  ## store parameters 
-    ## warning if the model doesn't fit within the specified iterations 
-    if(m.nlmf$iterations==iterlim) message(paste("Max reached for forward, device ",i))
-    ## calculate the final cost and store
-    estf[place,7] = min_logcurve(m.nlmf$estimate, d_forward$VG,
-                               max(log(abs(d_forward$ID))) / log(abs(d_forward$ID)))
+    datax = d_forward$VG; datay= log(pmax(abs(d_forward$ID), 1e-13))
+    est = optim(cur_forward_pars, min_logcurve, datax=datax, datay=datay, control=list(maxit=maxit))
     
+    # m.nlmf = nlm(min_logcurve, cur_forward_pars, 
+    #              d_forward$VG,
+    #              max_value/ log(abs(d_forward$ID)), 
+    #              iterlim = iterlim) 
+    estf[place, 1:6] = cur_forward_pars = est$par
+    
+    ## warning if the model doesn't fit within the specified iterations 
+   # if(m.nlmf$iterations==iterlim) message(paste("Max reached for forward, device ", i))
+    ## calculate the final cost and store
+    estf[place, ncol(estf)] = est$value
+    #min_logcurve(cur_forward_pars, d_forward$VG,
+     #                                      log(abs(d_forward$ID)))
+    
+    
+    d_backward = d[d$direction == "Backward",]  ## get the forward pass
     #backwards (as above but for backwards pass)
-    m.nlmb = nlm(min_logcurve_back, c(0.01, 0.01, 0.01, 0.01, 0.01, 0.01), d_backward$VG,
-                 max(log(abs(d_backward$ID))) / log(abs(d_backward$ID)), m.nlmf$estimate, iterlim = iterlim)
-    estb[place,1:6] = m.nlmb$estimate
-    if(m.nlmb$iterations==iterlim) message(paste("Max reached for backward, device ",i))
-    estb[place,7] = min_logcurve_back(m.nlmb$estimate, d_backward$VG,
-                                max(log(abs(d_backward$ID))) / log(abs(d_backward$ID)), m.nlmf$estimate)
+    datax = d_backward$VG; datay= log(pmax(abs(d_backward$ID), 1e-13))
+    est = optim(cur_forward_pars, min_logcurve, datax=datax, datay=datay, control=list(maxit=maxit))
+    # m.nlmb = nlm(min_logcurve, cur_backward_pars, 
+    #              d_backward$VG,
+    #              max_value/ log(abs(d_backward$ID)), 
+    #              iterlim = iterlim)
+    estb[place, 1:6] = cur_backward_pars = est$par
+    #if(m.nlmb$iterations==iterlim) message(paste("Max reached for backward, device ",i))
+    estb[place, ncol(estb)] = est$value
+      # min_logcurve_back(m.nlmb$estimate, d_backward$VG,
+      #                                           max_value/ log(abs(d_backward$ID)),
+      #                                           m.nlmf$estimate)
   }
-  ## combine into data.frame
-  forward = data.frame(id = id, name = unique(wafer$name), max = max(log(abs(wafer$ID))), 
-                        cost = estf[,7], direction = "Forward", estf[,1:6])
-  backward = data.frame(id = id, name = unique(wafer$name), max = max(log(abs(wafer$ID))), 
-                        cost = estb[,7], direction = "Backward", estb[,1:6])
   
-  return(rbind(forward,backward))
+  for_params = apply(estf[, 1:6, drop=FALSE], 2, weighted.mean, estf[,7], na.rm=TRUE)
+  back_params = apply(estb[, 1:6, drop=FALSE], 2, weighted.mean, estb[,7], na.rm=TRUE)
+  
+  results = data.frame(rbind(for_params, back_params), 
+                       cost = c(mean(estf[,7]), mean(estb[,7])),
+                       id = wafer$wafer_id[1], 
+                       direction= c("Forward", "Backward"), stringsAsFactors = FALSE)
+  rownames(results) = NULL
+  
+  
+  class(results) = c("wafer", class(results))
+  return(results)
 }
 
 #' Fit logcurves to multiple wafers
@@ -105,14 +157,14 @@ fit_wafer = function(wafer, iterlim=2000, id=NULL){
 #' fit = fit_all(wafers_folder)
 #'
 #' @export
-fit_all = function(path, iterlim=2000){
+fit_all = function(path, iterlim=2000, verbose=TRUE){
   files = list.files(path = path, pattern = ".rds") ## get files to read
-  message("Files found: ",paste(files,collapse=" "))
+  if(verbose) message("Files found: ", paste(files,collapse=" "))
   
   for(i in 1:length(files)){
     wafer = readRDS(file.path(path, files[i])) ## read a file/wafer
-    message("Reading: ",files[i])
-    fit = fit_wafer(wafer, iterlim, files[i]) ## fit model to that wafer
+    if(verbose) message("Reading: ", files[i])
+    fit = fit_wafer(wafer, iterlim, verbose=verbose) ## fit model to that wafer
     
     if(i==1){
       param = fit
