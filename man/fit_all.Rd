@@ -4,7 +4,7 @@
 \alias{fit_all}
 \title{Fit logcurves to multiple wafers}
 \usage{
-fit_all(path, iterlim = 2000)
+fit_all(path, iterlim = 2000, verbose = TRUE)
 }
 \arguments{
 \item{path}{Directory containing multiple .rds files, each containing a single wafer}

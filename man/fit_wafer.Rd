@@ -4,7 +4,7 @@
 \alias{fit_wafer}
 \title{Fit logcurves to a wafer}
 \usage{
-fit_wafer(wafer, iterlim = 2000, id = NULL)
+fit_wafer(wafer, maxit = 10000, verbose = TRUE)
 }
 \arguments{
 \item{wafer}{Data from a single wafer.}
