@@ -1,4 +1,8 @@
-
+#' Determine forward/backward curve
+#' 
+#' Adds a new column called `direction` indicating if the row relates
+#' to forward or backward.
+#' @inheritParams fit_wafer
 #' @export
 add_forward_backward = function(wafer) {
   i = unique(wafer$name)[1]

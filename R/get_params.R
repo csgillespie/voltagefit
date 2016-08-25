@@ -4,6 +4,7 @@
 #' each week present in a fitted manova, provided by \code{\link{fit_manova}}.
 #'
 #' @param fm  Fitted manova list, as output by \code{\link{fit_manova}}.
+#' @param combine Should the treatment parameters be combined (default TRUE).
 #' 
 #' @return A data.frame consisting of the fields:
 #'   \describe{
@@ -25,8 +26,7 @@ get_params = function(fm, combine=FALSE) {
   baseline = baseline_params(fm)
   week = week_params(fm) 
   treatment = treatment_params(fm)
-  
-  
+
   if(combine){
     par_loc = get_par_loc(treatment)
     treatment[,par_loc] = treatment[, par_loc] + baseline[, par_loc]

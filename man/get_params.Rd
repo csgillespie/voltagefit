@@ -8,6 +8,8 @@ get_params(fm, combine = FALSE)
 }
 \arguments{
 \item{fm}{Fitted manova list, as output by \code{\link{fit_manova}}.}
+
+\item{combine}{Should the treatment parameters be combined (default TRUE).}
 }
 \value{
 A data.frame consisting of the fields:
