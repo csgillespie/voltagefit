@@ -6,13 +6,10 @@ Authors@R: c(person("Colin", "Gillespie", email = "csgillespie.gmail.com", role 
 Description: A collection of functions for fitting logistic models to voltage curves.
 Depends:
     R (>= 3.2.0)
-Remotes:
-    HenrikBengtsson/matrixStats@develop
 Imports:
     MASS (>= 7.3-44),
-    stringi (>= 1.1.1),
-    matrixStats
-Suggests: knitr, ggplot2
+    stringi (>= 1.1.1)
+Suggests: knitr, ggplot2, rmarkdown
 License: GPL-2 | GPL-3
 Encoding: UTF-8
 LazyData: true

@@ -30,21 +30,12 @@ simulate = function(x, n, direction) {
   return(dd)
 }
 
-
-#' @export
-sample = function(x, ...)
-  UseMethod("sample")
-
-#' @export
-sample.default = function(x, ...) base::sample(x, ...)
-
 sample_parameters = function(fm, n){
   forward = simulate(fm$forward, n, "Forward")
   backward = simulate(fm$backward, n, "Backward")
   sims = rbind(forward, backward)
   sims  
 }
-
 
 #' Sample underlying curves
 #'
@@ -68,6 +59,13 @@ sample_parameters = function(fm, n){
 #'         replicate = 1:6, treatment = rep(1,6))
 #' fitman = fit_manova(fitted, design)
 #' samples = sample(fitman)
+#' @export
+sample = function(x, n, ...)
+  UseMethod("sample")
+
+#' @export
+sample.default = function(x, ...) base::sample(x, ...)
+
 #' @export
 sample.fit_manova = function(x, n=100, ...){
   (pars = sample_parameters(x, n))
