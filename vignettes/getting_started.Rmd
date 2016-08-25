@@ -16,7 +16,7 @@ The package lives on [github](https://github.com/csgillespie/voltagefit/) and ca
 devtools::install_github("csgillespie/voltagefit")
 ```
 and loaded in the usual way
-```{r}
+```{r, message=FALSE}
 library("voltagefit")
 ```
 
@@ -118,7 +118,8 @@ unders = sample(fit_man,  n=20)
 #head(unders)
 
 #unders = dd
-ggplot(unders$samples) + geom_line(aes(x, y, group=sim_no, colour=type)) + scale_y_log10() + 
+ggplot(unders$samples) + 
+  geom_line(aes(x, y, group=sim_no, colour=type)) + scale_y_log10() + 
   facet_grid(~direction)
 
 ```
