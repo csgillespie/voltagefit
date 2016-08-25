@@ -20,11 +20,3 @@ mean.fit_manova = function(x, direction="Forward", ...){
   }
   dd
 }
-# 
-# 
-# 
-# means = mean(fit_man, direction="Forward")
-# 
-# library(ggplot2)
-# ggplot(means) + geom_line(aes(x,y, colour=type)) + 
-#   scale_y_log10()
