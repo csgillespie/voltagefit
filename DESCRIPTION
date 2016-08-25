@@ -12,7 +12,7 @@ Imports:
     MASS (>= 7.3-44),
     stringi (>= 1.1.1),
     matrixStats
-Suggests: knitr, ggplot2
+Suggests: knitr, ggplot2, rmarkdown
 License: GPL-2 | GPL-3
 Encoding: UTF-8
 LazyData: true
