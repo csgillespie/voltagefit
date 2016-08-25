@@ -1,5 +1,4 @@
 get_curve = function(pars, x = seq(-4, 4, length.out=100)) {
-  m = get_max_value()
   pars = as.numeric(pars)
   y = logcurve(x, pars)
   data.frame(x = x, y = exp(y), stringsAsFactors = FALSE)
