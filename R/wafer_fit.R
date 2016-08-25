@@ -16,23 +16,6 @@ add_forward_backward = function(wafer) {
   }
   return(dd)
 }
-# wafer = wafer3737
-# 
-# dd = get_forward_backward(wafer3737)
-# 
-# library(ggplot2)
-# ggplot(d_forward) + geom_line(aes(VG, abs(ID), colour=name)) + 
-#   scale_y_log10()
-# 
-# plot(d_forward$VG,abs(d_forward$ID), log="y")
-# 
-# d_forward$ID
-# 
-# 
-# head(dd)
-# ggplot(subset(dd, direction=="Forward")) + geom_line(aes(VG, ID, colour=name)) + 
-#   scale_y_log10()
-# 
 
 
 #' Fit logcurves to a wafer
@@ -79,42 +62,22 @@ fit_wafer = function(wafer, maxit=10000, verbose=TRUE){
     if(verbose) message(i)
     place = place + 1
     d = wafer[wafer$name==i,]  ## get the data for the device
-    #d = d[d$VG > -1, ]
-    d_forward = d[d$direction == "Forward",]  
+      d_forward = d[d$direction == "Forward",]  
 
     #forwards
-    ## fit the model to the forward pass, fitted to transformed data to improve fit
     datax = d_forward$VG; datay= log(pmax(abs(d_forward$ID), 1e-13))
     est = optim(cur_forward_pars, min_logcurve, datax=datax, datay=datay, control=list(maxit=maxit))
-    
-    # m.nlmf = nlm(min_logcurve, cur_forward_pars, 
-    #              d_forward$VG,
-    #              max_value/ log(abs(d_forward$ID)), 
-    #              iterlim = iterlim) 
     estf[place, 1:6] = cur_forward_pars = est$par
     
-    ## warning if the model doesn't fit within the specified iterations 
    # if(m.nlmf$iterations==iterlim) message(paste("Max reached for forward, device ", i))
-    ## calculate the final cost and store
     estf[place, ncol(estf)] = est$value
-    #min_logcurve(cur_forward_pars, d_forward$VG,
-     #                                      log(abs(d_forward$ID)))
-    
-    
-    d_backward = d[d$direction == "Backward",]  ## get the forward pass
-    #backwards (as above but for backwards pass)
+
+    d_backward = d[d$direction == "Backward",]
     datax = d_backward$VG; datay= log(pmax(abs(d_backward$ID), 1e-13))
     est = optim(cur_forward_pars, min_logcurve, datax=datax, datay=datay, control=list(maxit=maxit))
-    # m.nlmb = nlm(min_logcurve, cur_backward_pars, 
-    #              d_backward$VG,
-    #              max_value/ log(abs(d_backward$ID)), 
-    #              iterlim = iterlim)
     estb[place, 1:6] = cur_backward_pars = est$par
     #if(m.nlmb$iterations==iterlim) message(paste("Max reached for backward, device ",i))
     estb[place, ncol(estb)] = est$value
-      # min_logcurve_back(m.nlmb$estimate, d_backward$VG,
-      #                                           max_value/ log(abs(d_backward$ID)),
-      #                                           m.nlmf$estimate)
   }
   
   for_params = apply(estf[, 1:6, drop=FALSE], 2, weighted.mean, estf[,7], na.rm=TRUE)
