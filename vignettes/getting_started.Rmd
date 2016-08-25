@@ -15,7 +15,7 @@ The package lives on [github](https://github.com/csgillespie/voltagefit/) and ca
 ```{r eval=FALSE}
 devtools::install_github("csgillespie/voltagefit")
 ```
-
+and loaded in the usual way
 ```{r}
 library("voltagefit")
 ```
@@ -92,7 +92,6 @@ We then fit a MANOVA model, using the parameter values as the response
 ```{r}
 fit_man = fit_manova(all_wafers, design)
 (params = get_params(fit_man))
-(params = get_params(fit_man, combine = TRUE))
 ```
 <!-- MANOVA is just a multivariate version of the ANOVA table. As such, we can  -->
 <!-- obtain a $p$-value for week differences using -->
