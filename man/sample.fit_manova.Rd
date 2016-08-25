@@ -2,26 +2,27 @@
 % Please edit documentation in R/sample.R
 \name{sample.fit_manova}
 \alias{sample.fit_manova}
-\title{Sample underlying curve parameters}
+\title{Sample underlying curves}
 \usage{
 \method{sample}{fit_manova}(x, n = 100, ...)
 }
 \arguments{
-\item{n}{Number of samples required (Default: 1000).}
+\item{x}{Data.frame as output by \code{\link{fit_manova}}.}
 
-\item{underp}{Data.frame as output by \code{\link{under_param}}.}
+\item{n}{Number of samples required (Default: 100).}
+
+\item{...}{Other arguments (not typically needed).}
 }
 \value{
 A data.frame consisting of the fields:
   \describe{
      \item{direction}{Whether the curve direction is forward or backward}
      \item{X1 ... X6}{The parameters characterising the curve}
+     \item{type}{Baseline, treatment, or week.}
   }
 }
 \description{
-Generate sample forward and backward underlying curve parameters,
-using the underlying curve parameters and covariance matrix given
-by \code{\link{under_param}}.
+Generate sample forward and backward underlying curves.
 }
 \examples{
 wafers_folder = file.path(path.package("voltagefit"),"extdata") # path to wafers data directory
@@ -29,8 +30,6 @@ fitted = fit_all(wafers_folder)
 design = data.frame(week = c(1,1,1,1,2,2), wafer = unique(fitted$id), 
         replicate = 1:6, treatment = rep(1,6))
 fitman = fit_manova(fitted, design)
-underp = under_param(fitman)
-sample_under_param(underp)
-
+samples = sample(fitman)
 }
 

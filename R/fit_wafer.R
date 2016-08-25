@@ -155,14 +155,14 @@ fit_wafer = function(wafer, maxit=10000, verbose=TRUE){
 #' fit = fit_all(wafers_folder)
 #'
 #' @export
-fit_all = function(path, iterlim=2000, verbose=TRUE){
+fit_all = function(path, maxit=10000, verbose=TRUE){
   files = list.files(path = path, pattern = ".rds") ## get files to read
   if(verbose) message("Files found: ", paste(files,collapse=" "))
   
   for(i in 1:length(files)){
     wafer = readRDS(file.path(path, files[i])) ## read a file/wafer
     if(verbose) message("Reading: ", files[i])
-    fit = fit_wafer(wafer, iterlim, verbose=verbose) ## fit model to that wafer
+    fit = fit_wafer(wafer, maxit=maxit, verbose=verbose) ## fit model to that wafer
     
     if(i==1){
       param = fit

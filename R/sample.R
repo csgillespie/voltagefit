@@ -1,19 +1,6 @@
-#' @export
-sample = function(x, ...)
-  UseMethod("sample")
-
-#' @export
-sample.default = function(x, ...) base::sample(x, ...)
-
-sample_parameters = function(fm, n){
-  forward = simulate(fm$forward, n, "Forward")
-  backward = simulate(fm$backward, n, "Backward")
-  sims = rbind(forward, backward)
-  sims  
-}
-
+# Simulate new curves from parameters
 simulate = function(x, n, direction) {
-
+  
   (samples = mvrnorm(n, as.numeric(coefficients(x$man_w)), x$varcov))
   baseline = samples[,grep("Intercept", colnames(samples))]
   week = samples[,grep("week", colnames(samples))]
@@ -32,7 +19,7 @@ simulate = function(x, n, direction) {
   
   if(ncol(treatment) > 0 ) {
     treatment = treatment + baseline
-
+    
     dd_tmp = as.data.frame(treatment)
     colnames(dd_tmp) = paste0("X", 1:ncol(dd_tmp))
     dd_tmp$type = "treatment"
@@ -44,20 +31,34 @@ simulate = function(x, n, direction) {
 }
 
 
+#' @export
+sample = function(x, ...)
+  UseMethod("sample")
 
-#' Sample underlying curve parameters
+#' @export
+sample.default = function(x, ...) base::sample(x, ...)
+
+sample_parameters = function(fm, n){
+  forward = simulate(fm$forward, n, "Forward")
+  backward = simulate(fm$backward, n, "Backward")
+  sims = rbind(forward, backward)
+  sims  
+}
+
+
+#' Sample underlying curves
 #'
-#' Generate sample forward and backward underlying curve parameters,
-#' using the underlying curve parameters and covariance matrix given
-#' by \code{\link{under_param}}.
+#' Generate sample forward and backward underlying curves.
 #'
-#' @param underp    Data.frame as output by \code{\link{under_param}}.
-#' @param n         Number of samples required (Default: 1000).
+#' @param x    Data.frame as output by \code{\link{fit_manova}}.
+#' @param n         Number of samples required (Default: 100).
+#' @param ... Other arguments (not typically needed).
 #' 
 #' @return A data.frame consisting of the fields:
 #'   \describe{
 #'      \item{direction}{Whether the curve direction is forward or backward}
 #'      \item{X1 ... X6}{The parameters characterising the curve}
+#'      \item{type}{Baseline, treatment, or week.}
 #'   }
 #'   
 #' @examples
@@ -66,9 +67,7 @@ simulate = function(x, n, direction) {
 #' design = data.frame(week = c(1,1,1,1,2,2), wafer = unique(fitted$id), 
 #'         replicate = 1:6, treatment = rep(1,6))
 #' fitman = fit_manova(fitted, design)
-#' underp = under_param(fitman)
-#' sample_under_param(underp)
-#'
+#' samples = sample(fitman)
 #' @export
 sample.fit_manova = function(x, n=100, ...){
   (pars = sample_parameters(x, n))
