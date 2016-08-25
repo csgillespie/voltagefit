@@ -17,6 +17,26 @@ add_forward_backward = function(wafer) {
   return(dd)
 }
 
+#' @rdname fit_wafer
+#' @export
+trans_device = function(wafer) {
+  wafer$ID = pmax(wafer$ID, 1e-13)
+  wafer$ID = pmin(wafer$ID, 1e-3)
+  wafer
+}
+
+#' @rdname fit_wafer
+#' @export
+validate_device = function(wafer) {
+  wafer = wafer[wafer$direction == "Forward", ]
+  ID = wafer[wafer$VG < -5, "ID"]
+  if(any(ID > 1e-9)) return(FALSE)
+  
+  ID = wafer[wafer$VG > 5, "ID"]
+  if(any(ID < 1e-5)) return(FALSE)
+  return(TRUE)
+}
+
 
 #' Fit logcurves to a wafer
 #'
@@ -48,36 +68,42 @@ add_forward_backward = function(wafer) {
 #' @importFrom graphics axis
 #' 
 #' @export
-fit_wafer = function(wafer, maxit=10000, verbose=TRUE){
+fit_wafer = function(wafer, trans=trans_device, validate=validate_device,
+                     maxit=10000, verbose=TRUE){
   wafer = add_forward_backward(wafer)
-
-  estf = matrix(0, nrow = length(unique(wafer$name)), ncol = 7)
+  
+  estf = matrix(NA, nrow = length(unique(wafer$name)), ncol = 7)
   estb = estf
   i = unique(wafer$name)[1]
   place = 0  
-  cur_forward_pars = cur_backward_pars = c(1.0, 1.4, -3, 4, -1.5, 0.3)
   cur_forward_pars = cur_backward_pars = c(-9.1123, -15.5432, 1.1966,
                                            0.6834, -0.1843, 0.1418)
+  
+  
   for (i in unique(wafer$name)){ ## iterate through each device on the wafer
     if(verbose) message(i)
     place = place + 1
     d = wafer[wafer$name==i,]  ## get the data for the device
-      d_forward = d[d$direction == "Forward",]  
-
-    #forwards
-    datax = d_forward$VG; datay= log(pmax(abs(d_forward$ID), 1e-13))
-    est = optim(cur_forward_pars, min_logcurve, datax=datax, datay=datay, control=list(maxit=maxit))
-    estf[place, 1:6] = cur_forward_pars = est$par
+    d = trans(d)
+    is_valid = validate(d)
     
-   # if(m.nlmf$iterations==iterlim) message(paste("Max reached for forward, device ", i))
-    estf[place, ncol(estf)] = est$value
-
-    d_backward = d[d$direction == "Backward",]
-    datax = d_backward$VG; datay= log(pmax(abs(d_backward$ID), 1e-13))
-    est = optim(cur_forward_pars, min_logcurve, datax=datax, datay=datay, control=list(maxit=maxit))
-    estb[place, 1:6] = cur_backward_pars = est$par
-    #if(m.nlmb$iterations==iterlim) message(paste("Max reached for backward, device ",i))
-    estb[place, ncol(estb)] = est$value
+    if(is_valid) {
+      d_forward = d[d$direction == "Forward",]  
+      #forwards
+      datax = d_forward$VG; datay = log(d_forward$ID)
+      est = optim(cur_forward_pars, min_logcurve, datax=datax, datay=datay, control=list(maxit=maxit))
+      estf[place, 1:6] = cur_forward_pars = est$par
+      
+      # if(m.nlmf$iterations==iterlim) message(paste("Max reached for forward, device ", i))
+      estf[place, ncol(estf)] = est$value
+      
+      d_backward = d[d$direction == "Backward",]
+      datax = d_backward$VG; datay= log(d_backward$ID)
+      est = optim(cur_forward_pars, min_logcurve, datax=datax, datay=datay, control=list(maxit=maxit))
+      estb[place, 1:6] = cur_backward_pars = est$par
+      #if(m.nlmb$iterations==iterlim) message(paste("Max reached for backward, device ",i))
+      estb[place, ncol(estb)] = est$value
+    }
   }
   
   for_params = apply(estf[, 1:6, drop=FALSE], 2, weighted.mean, estf[,7], na.rm=TRUE)
