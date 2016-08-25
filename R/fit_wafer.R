@@ -39,14 +39,13 @@ add_forward_backward = function(wafer) {
 #' for details of how wafers are filtered.
 #'
 #' @param wafer     Data from a single wafer.
-#' @param iterlim   Maxiumum number of iterations to use in nlm (Default: 2000).
-#' @param id        WaferID (Default: A random string is generated as the ID).
+#' @param maxit   Maxiumum number of iterations to use in nlm (Default: 10000).
+#' @param verbose Print verbose output (Default: \code{TRUE}).
 #' 
 #' @return A data.frame consisting of the fields:
 #'   \describe{
 #'      \item{id}{Wafer ID}
 #'      \item{name}{Each device on the wafer}
-#'      \item{max}{Maximum of \code{log(abs(ID))}, where \code{ID} is the current drain data taken from \code{wafer}}
 #'      \item{cost}{The value of the cost function for each device}
 #'      \item{direction}{Whether the curve direction is forward or backward}
 #'      \item{X1 ... X6}{The parameters characterising the curve}
@@ -72,7 +71,6 @@ fit_wafer = function(wafer, maxit=10000, verbose=TRUE){
   cur_forward_pars = cur_backward_pars = c(1.0, 1.4, -3, 4, -1.5, 0.3)
   cur_forward_pars = cur_backward_pars = c(-9.1123, -15.5432, 1.1966,
                                            0.6834, -0.1843, 0.1418)
-  max_value = get_max_value()
   for (i in unique(wafer$name)){ ## iterate through each device on the wafer
     if(verbose) message(i)
     place = place + 1

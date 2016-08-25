@@ -9,16 +9,15 @@ fit_wafer(wafer, maxit = 10000, verbose = TRUE)
 \arguments{
 \item{wafer}{Data from a single wafer.}
 
-\item{iterlim}{Maxiumum number of iterations to use in nlm (Default: 2000).}
+\item{maxit}{Maxiumum number of iterations to use in nlm (Default: 10000).}
 
-\item{id}{WaferID (Default: A random string is generated as the ID).}
+\item{verbose}{Print verbose output (Default: \code{TRUE}).}
 }
 \value{
 A data.frame consisting of the fields:
   \describe{
      \item{id}{Wafer ID}
      \item{name}{Each device on the wafer}
-     \item{max}{Maximum of \code{log(abs(ID))}, where \code{ID} is the current drain data taken from \code{wafer}}
      \item{cost}{The value of the cost function for each device}
      \item{direction}{Whether the curve direction is forward or backward}
      \item{X1 ... X6}{The parameters characterising the curve}

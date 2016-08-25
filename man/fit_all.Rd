@@ -9,7 +9,7 @@ fit_all(path, iterlim = 2000, verbose = TRUE)
 \arguments{
 \item{path}{Directory containing multiple .rds files, each containing a single wafer}
 
-\item{iterlim}{Maxiumum number of iterations to use in nlm (Default: 2000).}
+\item{verbose}{Print verbose output (Default: \code{TRUE}).}
 }
 \value{
 A data.frame consisting of the fields:
