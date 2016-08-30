@@ -9,7 +9,7 @@ fit_all(path, maxit = 10000, verbose = TRUE)
 \arguments{
 \item{path}{Directory containing multiple .rds files, each containing a single wafer}
 
-\item{maxit}{Maxiumum number of iterations to use in nlm (Default: 10000).}
+\item{maxit}{Maxiumum number of iterations for use in optimiser (Default: 10000).}
 
 \item{verbose}{Print verbose output (Default: \code{TRUE}).}
 }

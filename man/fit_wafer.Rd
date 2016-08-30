@@ -11,12 +11,18 @@ trans_device(wafer)
 validate_device(wafer)
 
 fit_wafer(wafer, trans = trans_device, validate = validate_device,
-  maxit = 10000, verbose = TRUE)
+  initparams = c(-10, -30, 5, 0, 5), maxit = 10000, verbose = TRUE)
 }
 \arguments{
 \item{wafer}{Data from a single wafer.}
 
-\item{maxit}{Maxiumum number of iterations to use in nlm (Default: 10000).}
+\item{trans}{Wafer ransform function}
+
+\item{validate}{Wafer validate function}
+
+\item{initparams}{Inital parameter guess for use in optimiser}
+
+\item{maxit}{Maxiumum number of iterations for use in optimiser (Default: 10000).}
 
 \item{verbose}{Print verbose output (Default: \code{TRUE}).}
 }

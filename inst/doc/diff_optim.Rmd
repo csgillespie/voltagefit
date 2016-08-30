@@ -1,0 +1,41 @@
+---
+title: "Testing passing differentials to optim"
+author: "G. W. Stagg"
+output: rmarkdown::html_vignette
+---
+<!--
+%\VignetteEngine{knitr::rmarkdown}
+%\VignetteIndexEntry{Testing passing differentials to optim}
+-->
+```{r, echo=FALSE, results="hide"}
+library(voltagefit)
+cost_fun = function(x,y){
+  (x-y)^2
+}
+logcurve_colin = function(x, param){
+  param[1] + param[2] / (1 + exp(param[3] + param[4]*x + param[5]*x^2 + param[6]*x^3))
+}
+min_logcurve_colin = function(param, datax, datay){
+  z = logcurve_colin(datax, param)
+  res = cost_fun(z, datay) 
+  sum(res[!is.nan(res)])
+}
+logcurve_5PL = function(x, param){
+  param[4]+ (param[1]-param[4])/(1+((x+20)/param[3])^param[2])^param[5]
+}
+min_logcurve_5PL = function(param, datax, datay){
+  z = logcurve_5PL(datax, param)
+  res = cost_fun(z, datay) 
+  sum(res[!is.nan(res)])
+}
+```
+
+##Introduction
+Optim supports passing the first derivative to it's routines to improve curve fitting performance. The result of this process is demonstrated here.
+
+##Without first derivative
+Without using the first derivative we find
+```{r}
+fit_wafer_with_curve(wafer3737, logcurve_colin, min_logcurve_colin, c(-9.1123, -15.5432, 1.1966,0.6834, -0.1843, 0.1418))
+```
+

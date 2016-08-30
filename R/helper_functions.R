@@ -3,18 +3,22 @@
 ## logcurve
 ## Function for the forwards curve
 logcurve = function(x, param){
-  #param[1] + (param[2] - param[1]) / (1 + exp(param[3] + param[4]*x + param[5]*x^2 + param[6]*x^3))
-  param[6] = 0
-  param[1] + param[2] / (1 + exp(param[3] + param[4]*x + param[5]*x^2 + param[6]*x^3))
+  #param[1] + param[2] / (1 + exp(param[3] + param[4]*x + param[5]*x^2 + param[6]*x^3))
+  cfbar = (2*param[3]*param[5])/abs(param[3]+param[5])
+  fx = 1/(1+exp(-cfbar*(x-param[4])))
+  param[1] + param[2] / (1 + fx*exp(param[3]*(x-param[4])) + (1-fx)*exp(param[5]*(x-param[4])))
 }
 
 ## min_logcurve
 ## The function to be minimised by nlm to fit the forward logcurve,
 ## subject to the cost function (cost_fun)
 min_logcurve = function(param, datax, datay){
-  #x is what will be used (changed) to minimise, i.e param values 
-  z = logcurve(datax, param)
-  res = cost_fun(z, datay) 
+  #z = logcurve(datax, param)
+  #res = cost_fun(z, datay) 
+  interp = approx(datax,datay,n = length(datax))
+  z = logcurve(interp$x, param)
+  res = cost_fun(z, interp$y) 
+  
   sum(res[!is.nan(res)])
 }
 

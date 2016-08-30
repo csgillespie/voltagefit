@@ -1,0 +1,192 @@
+---
+title: "Comparing logistic curves"
+author: "G. W. Stagg"
+output: rmarkdown::html_vignette
+---
+<!--
+%\VignetteEngine{knitr::rmarkdown}
+%\VignetteIndexEntry{Comparing logistic curves}
+-->
+```{r, echo=FALSE, results="hide"}
+library(voltagefit)
+cost_fun = function(x,y){
+  (x-y)^2
+}
+logcurve_colin = function(x, param){
+  param[1] + param[2] / (1 + exp(param[3] + param[4]*x + param[5]*x^2 + param[6]*x^3))
+}
+min_logcurve_colin = function(param, datax, datay){
+  z = logcurve_colin(datax, param)
+  res = cost_fun(z, datay) 
+  sum(res[!is.nan(res)])
+}
+logcurve_tanh = function(x, param){
+  param[1] + param[2]*tanh((x-param[4])/param[3])
+}
+min_logcurve_tanh = function(param, datax, datay){
+  z = logcurve_tanh(datax, param)
+  res = cost_fun(z, datay) 
+  sum(res[!is.nan(res)])
+}
+logcurve_4PL = function(x, param){
+  param[4]+ (param[1]-param[4])/(1+((x+100)/param[3])^param[2])
+}
+min_logcurve_4PL = function(param, datax, datay){
+  z = logcurve_4PL(datax, param)
+  res = cost_fun(z, datay) 
+  sum(res[!is.nan(res)])
+}
+logcurve_5PL = function(x, param){
+  param[4]+ (param[1]-param[4])/(1+((x+20)/param[3])^param[2])^param[5]
+}
+min_logcurve_5PL = function(param, datax, datay){
+  z = logcurve_5PL(datax, param)
+  res = cost_fun(z, datay) 
+  sum(res[!is.nan(res)])
+}
+logcurve_4BARO = function(x, param){
+  param[1]+(param[2]/(1+exp(param[3]*(x-param[4]))))
+}
+min_logcurve_4BARO = function(param, datax, datay){
+  z = logcurve_4BARO(datax, param)
+  res = cost_fun(z, datay) 
+  sum(res[!is.nan(res)])
+}
+logcurve_5BARO = function(x, param){
+  cfbar = (2*param[3]*param[5])/abs(param[3]+param[5])
+  fx = 1/(1+exp(-cfbar*(x-param[4])))
+  param[1] + param[2] / (1 + fx*exp(param[3]*(x-param[4])) + (1-fx)*exp(param[5]*(x-param[4])))
+}
+min_logcurve_5BARO = function(param, datax, datay){
+  z = logcurve_5BARO(datax, param)
+  res = cost_fun(z, datay) 
+  sum(res[!is.nan(res)])
+}
+```
+
+##Introduction
+This is a comparison of fitting different sigmoid curves to wafer devices in `voltagefit`. In this document I have left the default fitting method of least squares, which is minimised using `optim`, at writing *without* using derivatives.
+
+##Original curve
+The original 6-parameter curve that was being used is,
+$$y = \theta_1 + \frac{\theta_2}{1 + \exp(\theta_3 + \theta_4 x + \theta_5 x^2 + \theta_6 x^3)}.$$
+Here the effect of changing \(\theta_1\) and \(\theta_2\) can probably be deduced, but the effect of varying \(\theta_3\) to \(\theta_6\) may be harder to pinpoint.
+
+###Results
+The resulting output from fitting this model to the devices on `wafer3737` is:
+```{r,fig.width = 8, fig.height = 8}
+fit_wafer_and_plot(wafer3737, logcurve_colin, min_logcurve_colin, c(-9.1123, -15.5432, 1.1966,0.6834, -0.1843, 0.1418))
+```
+
+###Comments
+This curve fits well in the backwards case. In the forwards case, the curve is not monotonically increasing and so some strange curves are generated that oscillates.
+
+------------------------------------------------------------------------
+
+##Three parameter tanh curve
+$$y = \theta_1 + \theta_2 \tanh(\frac{x-\theta_4}{\theta_3})$$
+
+###Parameter meaning
+
+  * \(\theta_1\) = value of y at center of the curve
+  * \(\theta_2\) = distance from the center of the curve to the top/bottom
+  * \(\theta_3\) = a measure of the steepness of the curve
+  * \(\theta_4\) = x shift
+
+###Results
+The resulting output from fitting this model to the devices on `wafer3737` is:
+```{r,fig.width = 8, fig.height = 8}
+fit_wafer_and_plot(wafer3737, logcurve_tanh, min_logcurve_tanh, c(-10,10,0.5,0))
+```
+
+###Comments
+This curve again works quite well in the backwards case, but consistently underestimates the high voltage part of the forward curves.
+
+------------------------------------------------------------------------
+
+##Four Parameter Logistic Curve
+*NOTE: Here I have shifted the data >> 0, the raw curve is not supposed to handle x values of less than zero.*
+$$ y = \theta_4 + \frac{\theta_1-\theta_4}{1+((x+100)/\theta_3)^{\theta_2}}$$
+
+###Parameter meaning
+
+  * \(\theta_1\) = the minimum value
+  * \(\theta_2\) = the maximum value
+  * \(\theta_3\) = the point of inflection(+100)
+  * \(\theta_4\) = a measure of the steepness of the curve
+  
+###Results
+The resulting output from fitting this model to the devices on `wafer3737` is:
+```{r,fig.width = 8, fig.height = 8}
+fit_wafer_and_plot(wafer3737, logcurve_4PL, min_logcurve_4PL, c(-30,5,100,-10))
+```
+
+###Comments
+Other than the unelegant x-shift, this seems to work very similar to the tanh curve, also leading to similar fit costs.
+
+------------------------------------------------------------------------
+
+##Four Parameter BARO Curve (4BARO)
+$$y=\theta_1 +\frac{\theta_2}{1+\exp(\theta_3(x-\theta_4))}$$
+
+###Parameter meaning
+
+  * \(\theta_1\) = the minimum value
+  * \(\theta_2\) = the range of response. Note: (P1+P2) gives the minimum value
+  * \(\theta_3\) = a measure of the steepness of the curve
+  * \(\theta_4\) = x shift
+  
+###Results
+The resulting output from fitting this model to the devices on `wafer3737` is:
+```{r,fig.width = 8, fig.height = 8}
+fit_wafer_and_plot(wafer3737, logcurve_4BARO, min_logcurve_4BARO, c(-10,-20,5,0))
+```
+
+###Comments
+Again, very similar to the tanh curve fits and costs.
+
+##Five Parameter BARO Curve (5BARO)
+  $$c = \frac{2\theta_3\theta_5}{|\theta_3+\theta_5|}$$
+  $$f = \frac{1}{1+\exp(-c(x-\theta_4))}$$
+  $$y = \theta_1 + \frac{\theta_2}{1 + f\exp(\theta_3(x-\theta_4)) + (1-f)\exp(\theta_5(x-\theta_4))}$$
+
+###Parameter meaning
+
+  * \(\theta_1\) = the maximum value
+  * \(\theta_2\) = the minimum value
+  * \(\theta_3\) = a measure of the steepness of the curve
+  * \(\theta_4\) = x shift
+  * \(\theta_5\) = a measure of curve asymmetry
+  
+###Results
+The resulting output from fitting this model to the devices on `wafer3737` is:
+```{r,fig.width = 8, fig.height = 8}
+fit_wafer_and_plot(wafer3737, logcurve_5BARO, min_logcurve_5BARO, c(-10,-30,5,0,5))
+```
+
+###Comments
+Similar looking to the other newly tested curves, with slightly less cost.
+
+##HERE BE DRAGONS...
+The voltage x values in the forward curves are unevenly distributed, so least squares emphasises the fit in high density areas. This method uses interpolation to make the x points evenly distributed before fitting, making the fit "look" better in the high voltage tail.
+
+*NOTE: I am not sure if this is good stats or not, probably not... Is there a proper way to do this?*
+
+```{r,fig.width = 8, fig.height = 8}
+min_logcurve_5BAROI = function(param, datax, datay){
+  interp = approx(datax,datay,n = length(datax))
+  z = logcurve_5BARO(interp$x, param)
+  res = cost_fun(z, interp$y) 
+  sum(res[!is.nan(res)])
+}
+fit_wafer_and_plot(wafer3737, logcurve_5BARO, min_logcurve_5BAROI, c(-10,-30,5,0,5))
+```
+
+###And for wafer4464
+```{r,fig.width = 8, fig.height = 8}
+fit_wafer_and_plot(wafer4464, logcurve_5BARO, min_logcurve_5BAROI, c(-10,-30,5,0,5))
+```
+
+
+###Comments
+While also raising the high voltage side of the curve, this process also introduces kinks when used with 5BARO.

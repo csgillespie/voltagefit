@@ -41,7 +41,7 @@ hist.wafer = function(x, direction="Forward", cost=FALSE, ...) {
     hist(x$cost, panel.first = grid(), xlab = "Cost", 
          main = direction, col="steelblue", ...)
   } else {
-    par(mfrow = c(2, 3))
+    par(mfrow = c(2, 3),oma=c(0,0,2,0))
     par_loc = get_par_loc(x)
     for (i in seq_along(par_loc)){
       hist(x[, par_loc[i]], 
@@ -50,7 +50,7 @@ hist.wafer = function(x, direction="Forward", cost=FALSE, ...) {
            main = "", 
            col="steelblue", ...)
     }
-    mtext(direction, NORTH <- 3, line = 0.7, cex = 1)
+    title(direction, outer=TRUE)
   }
   invisible(NULL)
 }
