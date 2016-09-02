@@ -70,14 +70,16 @@ fit_wafer_and_plot(wafer3737, logcurve_4BARO, min_logcurve_4BARO, c(-10,-20,5,0)
 fit_wafer_and_plot(wafer3737, logcurve_5BARO, min_logcurve_5BARO, c(-10,-30,5,0,5))
 
 ## ----fig.width = 8, fig.height = 8---------------------------------------
-min_logcurve_5BAROI = function(param, datax, datay){
-  interp = approx(datax,datay,n = length(datax))
-  z = logcurve_5BARO(interp$x, param)
-  res = cost_fun(z, interp$y) 
-  sum(res[!is.nan(res)])
+area_cost_fun = function(datax,datay,fity){
+  sum((0.5*diff(datax)*(datay[1:length(datax)-1] + datay[2:length(datax)] 
+                        - fity[1:length(datax)-1] - fity[2:length(datax)]))^2)
 }
-fit_wafer_and_plot(wafer3737, logcurve_5BARO, min_logcurve_5BAROI, c(-10,-30,5,0,5))
+min_logcurve_5BAROA = function(param, datax, datay){
+  z = logcurve_5BARO(datax, param)
+  area_cost_fun(datax,datay,z)
+}
+fit_wafer_and_plot(wafer3737, logcurve_5BARO, min_logcurve_5BAROA, c(-10,-30,5,0,5))
 
 ## ----fig.width = 8, fig.height = 8---------------------------------------
-fit_wafer_and_plot(wafer4464, logcurve_5BARO, min_logcurve_5BAROI, c(-10,-30,5,0,5))
+fit_wafer_and_plot(wafer4464, logcurve_5BARO, min_logcurve_5BAROA, c(-10,-30,5,0,5))
 

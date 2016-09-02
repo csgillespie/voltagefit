@@ -14,6 +14,8 @@ fit_wafer_with_curve_diff(wafer, logc, minlogc, diffminlogc, initpars,
 
 \item{minlogc}{minlogcurve function}
 
+\item{diffminlogc}{first derivatives of minlogcurve function}
+
 \item{initpars}{inital parameters}
 
 \item{maxit}{Maxiumum number of iterations for use in optimiser (Default: 10000).}

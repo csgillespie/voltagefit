@@ -167,12 +167,14 @@ fit_wafer_and_plot(wafer3737, logcurve_5BARO, min_logcurve_5BARO, c(-10,-30,5,0,
 ###Comments
 Similar looking to the other newly tested curves, with slightly less cost.
 
+
 ##HERE BE DRAGONS...
-The voltage x values in the forward curves are unevenly distributed, so least squares emphasises the fit in high density areas. This method uses interpolation to make the x points evenly distributed before fitting, making the fit "look" better in the high voltage tail.
-
+The voltage x values in the forward curves are unevenly distributed, so least squares emphasises the fit in high density areas.. 
+<!--This method uses interpolation to make the x points evenly distributed before fitting, making the fit "look" better in the high voltage tail.
 *NOTE: I am not sure if this is good stats or not, probably not... Is there a proper way to do this?*
+*IDEA: Least Area?*
 
-```{r,fig.width = 8, fig.height = 8}
+{r,fig.width = 8, fig.height = 8}
 min_logcurve_5BAROI = function(param, datax, datay){
   interp = approx(datax,datay,n = length(datax))
   z = logcurve_5BARO(interp$x, param)
@@ -180,13 +182,42 @@ min_logcurve_5BAROI = function(param, datax, datay){
   sum(res[!is.nan(res)])
 }
 fit_wafer_and_plot(wafer3737, logcurve_5BARO, min_logcurve_5BAROI, c(-10,-30,5,0,5))
+
+
+###And for wafer4464
+{r,fig.width = 8, fig.height = 8,echo=FALSE, results="hide"}
+fit_wafer_and_plot(wafer4464, logcurve_5BARO, min_logcurve_5BAROI, c(-10,-30,5,0,5))
+
+###Comments
+While also raising the high voltage side of the curve, this process also introduces kinks when used with 5BARO.
+-->
+
+###IDEA: Least Area fitting.
+Instead of minimising the squares of the residuals, how about trying to minimise the area.
+
+Write down an integral of the difference between two linear lines. One line going through the data points, one going through the fitted points.
+
+This integral gives the area between the two curves. Now discretise the data and fitted curves using linear interpolation. This results in an integral that can be approximated similarly to using the trapezium rule. The area between point \(x[n]\) and \(x[n+1]\) is then,
+
+$$A_n = \frac{1}{2} (x_{n+1} - x_{n}) (y_n-z_n+y_{n+1}-z_{n+1}),$$
+
+where $y_n$ is the data points and $z_n$ takes the value of the fitted curve for all $x_n$. The cost can then be defined as,
+
+$$C = \Sigma_{n=1}^N A_n.$$
+
+```{r,fig.width = 8, fig.height = 8}
+area_cost_fun = function(datax,datay,fity){
+  sum((0.5*diff(datax)*(datay[1:length(datax)-1] + datay[2:length(datax)] 
+                        - fity[1:length(datax)-1] - fity[2:length(datax)]))^2)
+}
+min_logcurve_5BAROA = function(param, datax, datay){
+  z = logcurve_5BARO(datax, param)
+  area_cost_fun(datax,datay,z)
+}
+fit_wafer_and_plot(wafer3737, logcurve_5BARO, min_logcurve_5BAROA, c(-10,-30,5,0,5))
 ```
 
 ###And for wafer4464
 ```{r,fig.width = 8, fig.height = 8}
-fit_wafer_and_plot(wafer4464, logcurve_5BARO, min_logcurve_5BAROI, c(-10,-30,5,0,5))
+fit_wafer_and_plot(wafer4464, logcurve_5BARO, min_logcurve_5BAROA, c(-10,-30,5,0,5))
 ```
-
-
-###Comments
-While also raising the high voltage side of the curve, this process also introduces kinks when used with 5BARO.

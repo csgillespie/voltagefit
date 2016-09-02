@@ -20,6 +20,6 @@ min_logcurve_5PL = function(param, datax, datay){
   sum(res[!is.nan(res)])
 }
 
-## ------------------------------------------------------------------------
+## ----fig.width = 8-------------------------------------------------------
 fit_wafer_with_curve(wafer3737, logcurve_colin, min_logcurve_colin, c(-9.1123, -15.5432, 1.1966,0.6834, -0.1843, 0.1418))
 
