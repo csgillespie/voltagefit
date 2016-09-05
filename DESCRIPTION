@@ -2,7 +2,8 @@ Package: voltagefit
 Title: Voltage Curve Fitting
 Version: 0.0.1
 Authors@R: c(person("Colin", "Gillespie", email = "csgillespie.gmail.com", role = c("aut")),
-  person("Gavin", "Whitaker", email = "g.a.whitaker@newcastle.ac.uk", role = c("aut", "cre")))
+  person("Gavin", "Whitaker", email = "g.a.whitaker@newcastle.ac.uk", role = c("aut", "cre")),
+  person("George", "Stagg", email = "george.stagg@newcastle.ac.uk", role = c("aut")))
 Description: A collection of functions for fitting logistic models to voltage curves.
 Depends:
     R (>= 3.2.0)

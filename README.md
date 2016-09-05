@@ -9,3 +9,4 @@ Experimental package for fitting voltage curves. Authors:
 -   Gavin Whitaker
 -   Colin Gillespie
 -   Andrew Golightly
+-   George Stagg
