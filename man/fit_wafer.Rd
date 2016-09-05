@@ -4,27 +4,35 @@
 \alias{fit_wafer}
 \alias{trans_device}
 \alias{validate_device}
-\title{Fit logcurves to a wafer}
+\title{Fit curves to a wafer}
 \usage{
 trans_device(wafer)
 
 validate_device(wafer)
 
 fit_wafer(wafer, trans = trans_device, validate = validate_device,
-  initparams = c(-10, -30, 5, 0, 5), maxit = 10000, verbose = TRUE)
+  cost_func = area_between_curves, dev_curve = curve_4BARO,
+  initparams = c(-10, -30, 5, 0), maxit = 10000, verbose = TRUE,
+  plot = FALSE)
 }
 \arguments{
-\item{wafer}{Data from a single wafer.}
+\item{wafer}{Data from a single wafer}
 
-\item{trans}{Wafer ransform function}
+\item{trans}{(Optional) Wafer ransform function}
 
-\item{validate}{Wafer validate function}
+\item{validate}{(Optional) Wafer validate function}
 
-\item{initparams}{Inital parameter guess for use in optimiser}
+\item{cost_func}{(Optional) Cost function}
 
-\item{maxit}{Maxiumum number of iterations for use in optimiser (Default: 10000).}
+\item{dev_curve}{(Optional) Model device voltage curve}
 
-\item{verbose}{Print verbose output (Default: \code{TRUE}).}
+\item{initparams}{(Optional) Inital parameter estimation}
+
+\item{maxit}{(Optional) Maxiumum number of iterations for use in optimiser (Default: 10000)}
+
+\item{verbose}{(Optional) Print verbose output (Default: \code{TRUE})}
+
+\item{plot}{(Optional) Plot devices with fitted model (Default: \code{FALSE})}
 }
 \value{
 A data.frame consisting of the fields:
@@ -37,10 +45,9 @@ A data.frame consisting of the fields:
   }
 }
 \description{
-Fits logcurves to a wafer and returns the curve parameters and resulting
-cost for both forward and backwards curves. It is assumed that any wafer
-entering this function has been pre-filtered. See the function "filtered"
-for details of how wafers are filtered.
+Fits curves to a wafer and returns the curve parameters and resulting
+cost for both forward and backwards curves. Wafers can be validated and
+transformed before fitting.
 }
 \examples{
 fit_wafer(wafer3737)

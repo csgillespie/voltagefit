@@ -2,16 +2,18 @@
 % Please edit documentation in R/wafer_fit.R
 \name{fit_all}
 \alias{fit_all}
-\title{Fit logcurves to multiple wafers}
+\title{Fit curves to multiple wafers}
 \usage{
-fit_all(path, maxit = 10000, verbose = TRUE)
+fit_all(path, maxit = 10000, verbose = TRUE, plot = FALSE)
 }
 \arguments{
 \item{path}{Directory containing multiple .rds files, each containing a single wafer}
 
-\item{maxit}{Maxiumum number of iterations for use in optimiser (Default: 10000).}
+\item{maxit}{(Optional) Maxiumum number of iterations for use in optimiser (Default: 10000)}
 
-\item{verbose}{Print verbose output (Default: \code{TRUE}).}
+\item{verbose}{(Optional) Print verbose output (Default: \code{TRUE})}
+
+\item{plot}{(Optional) Plot devices with fitted model (Default: \code{FALSE})}
 }
 \value{
 A data.frame consisting of the fields:
@@ -27,11 +29,8 @@ A data.frame consisting of the fields:
   functions and plotting functions, is also appended.
 }
 \description{
-Fits logcurves to multiple wafers in a directory, and returns the parameters
-and cost for both forward and backwards curves. This is an extended version
-of \code{\link{fit_wafer}}. It is assumed that any wafer entering this
-function (and subsequently fit_wafer) has been pre-filtered. See the function
-"filtered" for details of how wafers are filtered.
+Fits curves to multiple wafers in a directory, using \code{\link{fit_wafer}}, 
+returning the parameters and cost for both forward and backwards curves.
 }
 \examples{
 wafers_folder = file.path(path.package("voltagefit"),"extdata") # path to wafers data directory

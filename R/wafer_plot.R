@@ -29,7 +29,7 @@ plot.wafer = function(x, y=NULL,  cost=FALSE, ...) {
   invisible(NULL)
 }
 
-#' @importFrom graphics grid hist legend lines mtext par plot
+#' @importFrom graphics grid hist legend lines mtext par plot title
 #' @export
 hist.wafer = function(x, direction="Forward", cost=FALSE, ...) {
   op = par(mar = c(3, 3, 2, 1), mgp = c(2, 0.4, 0), tck = -.01, 

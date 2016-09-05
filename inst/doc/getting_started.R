@@ -39,12 +39,12 @@ fit_man = fit_manova(all_wafers, design)
 ## ------------------------------------------------------------------------
 means = mean(fit_man)
 
-## ------------------------------------------------------------------------
+## ----fig.width = 8-------------------------------------------------------
 library(ggplot2)
 ggplot(means) + geom_line(aes(x, y, colour=type)) + scale_y_log10() + 
   facet_grid(~direction)
 
-## ------------------------------------------------------------------------
+## ----fig.width = 8-------------------------------------------------------
 ## Generate a sample of parameters for the underlying curve
 unders = sample(fit_man,  n=20)
 #head(unders)
