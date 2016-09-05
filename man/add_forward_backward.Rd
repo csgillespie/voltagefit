@@ -7,7 +7,7 @@
 add_forward_backward(wafer)
 }
 \arguments{
-\item{wafer}{Data from a single wafer.}
+\item{wafer}{Data from a single wafer}
 }
 \description{
 Adds a new column called `direction` indicating if the row relates

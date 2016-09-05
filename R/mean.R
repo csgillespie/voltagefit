@@ -1,6 +1,6 @@
-get_curve = function(pars, x = seq(-4, 4, length.out=100)) {
+get_curve = function(pars, x = seq(-4, 4, length.out=100),dev_curve=curve_4BARO) {
   pars = as.numeric(pars)
-  y = logcurve(x, pars)
+  y = dev_curve(x, pars)
   data.frame(x = x, y = exp(y), stringsAsFactors = FALSE)
 }
 

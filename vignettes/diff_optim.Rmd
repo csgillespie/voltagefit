@@ -1,0 +1,17 @@
+---
+title: "Testing passing differentials to optim"
+author: "G. W. Stagg"
+output: rmarkdown::html_vignette
+---
+<!--
+%\VignetteEngine{knitr::rmarkdown}
+%\VignetteIndexEntry{Testing passing differentials to optim}
+-->
+```{r, echo=FALSE, results="hide"}
+library(voltagefit)
+```
+
+##Introduction
+Optim supports passing the first derivative to it's routines to improve curve fitting performance. The result of this process is demonstrated here.
+
+TODO: Look into this - GWS
