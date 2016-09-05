@@ -14,6 +14,4 @@ library(voltagefit)
 ##Introduction
 Optim supports passing the first derivative to it's routines to improve curve fitting performance. The result of this process is demonstrated here.
 
-##Without first derivatives
-Without using the first derivative we find
-
+TODO: Look into this - GWS

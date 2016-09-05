@@ -20,6 +20,12 @@ and loaded in the usual way
 library("voltagefit")
 ```
 
+To enable parallelisation, run
+```{r eval=FALSE}
+library("doParallel")
+registerDoParallel()
+```
+
 ## Example data
 
 The package contains some example data sets that can be accessed via

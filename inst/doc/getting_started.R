@@ -4,6 +4,10 @@
 ## ---- message=FALSE------------------------------------------------------
 library("voltagefit")
 
+## ----eval=FALSE----------------------------------------------------------
+#  library("doParallel")
+#  registerDoParallel()
+
 ## ------------------------------------------------------------------------
 data_dir = system.file("extdata/", package="voltagefit")
 list.files(data_dir)
