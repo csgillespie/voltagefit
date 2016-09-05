@@ -61,10 +61,10 @@ add_forward_backward = function(wafer) {
 #'
 #' @examples
 #' wafers_folder = file.path(path.package("voltagefit"),"extdata") # path to wafers data directory
-#' fit = fit_all(wafers_folder, plot=TRUE)
+#' fit = fit_all(wafers_folder)
 #'
 #' @export
-fit_all = function(path, maxit=10000, verbose=TRUE, plot=FALSE){
+fit_all = function(path, maxit=10000, verbose=TRUE,plot=FALSE){
   files = list.files(path = path, pattern = ".rds") ## get files to read
   if(verbose) message("Files found: ", paste(files,collapse=" "))
   
@@ -112,7 +112,7 @@ fit_all = function(path, maxit=10000, verbose=TRUE, plot=FALSE){
 #'   }
 #'
 #' @examples
-#' fit_wafer(wafer3737,plot=TRUE)
+#' fit_wafer(wafer3737)
 #'
 #' @importFrom stringi stri_rand_strings
 #' @importFrom stats lm manova vcov approx
@@ -120,6 +120,7 @@ fit_all = function(path, maxit=10000, verbose=TRUE, plot=FALSE){
 #' @importFrom stats coefficients optim weighted.mean
 #' @importFrom graphics axis title
 #' @importFrom foreach foreach %dopar% getDoParWorkers
+#' @importFrom doParallel registerDoParallel
 #' 
 #' @export
 fit_wafer = function(wafer, trans=trans_device, validate=validate_device,

@@ -9,8 +9,6 @@ output: rmarkdown::html_vignette
 -->
 ```{r, echo=FALSE, results="hide"}
 library(voltagefit)
-library(doParallel)
-registerDoParallel(1)
 ```
 
 ##Introduction
