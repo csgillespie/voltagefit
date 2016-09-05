@@ -19,6 +19,10 @@ and loaded in the usual way
 ```{r, message=FALSE}
 library("voltagefit")
 ```
+```{r, echo=FALSE, results="hide"}
+library(doParallel)
+registerDoParallel(1)
+```
 
 ## Example data
 

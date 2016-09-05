@@ -32,7 +32,7 @@ fit_wafer(wafer, trans = trans_device, validate = validate_device,
 
 \item{verbose}{(Optional) Print verbose output (Default: \code{TRUE})}
 
-\item{plot}{(Optional) Plot devices with fitted model (Default: \code{FALSE})}
+\item{plot}{(Optional) Plot each devices with its fitted model (Default: \code{FALSE})}
 }
 \value{
 A data.frame consisting of the fields:
@@ -47,7 +47,8 @@ A data.frame consisting of the fields:
 \description{
 Fits curves to a wafer and returns the curve parameters and resulting
 cost for both forward and backwards curves. Wafers can be validated and
-transformed before fitting.
+transformed before fitting. Devices are fitted in parallel automatically, 
+however, note that \code{plot=TRUE} temporarily disables this parallelisation.
 }
 \examples{
 fit_wafer(wafer3737)

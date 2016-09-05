@@ -8,7 +8,9 @@ Depends:
     R (>= 3.2.0)
 Imports:
     MASS (>= 7.3-44),
-    stringi (>= 1.1.1)
+    stringi (>= 1.1.1),
+    foreach,
+    doParallel
 Suggests: knitr, ggplot2, rmarkdown
 License: GPL-2 | GPL-3
 Encoding: UTF-8

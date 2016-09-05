@@ -13,7 +13,7 @@ fit_all(path, maxit = 10000, verbose = TRUE, plot = FALSE)
 
 \item{verbose}{(Optional) Print verbose output (Default: \code{TRUE})}
 
-\item{plot}{(Optional) Plot devices with fitted model (Default: \code{FALSE})}
+\item{plot}{(Optional) Plot each devices with its fitted model (Default: \code{FALSE})}
 }
 \value{
 A data.frame consisting of the fields:
