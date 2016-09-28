@@ -27,17 +27,13 @@ validate_device = function(wafer) {
 #' @inheritParams fit_wafer
 #' @export
 add_forward_backward = function(wafer) {
-  i = unique(wafer$name)[1]
-  dd = NULL
-  for (i in unique(wafer$name)){ ## iterate through each device on the wafer
-    d = wafer[wafer$name==i,]  ## get the data for the device
-    tot_f = which(diff(wafer[wafer$name==i,]$VG) < 0)[1]
-    tot_obs = length(wafer[wafer$name==unique(wafer$name)[1],]$VG) 
-    d$direction = rep(c("Forward", "Backward"), c(tot_f-1, tot_obs - tot_f + 1))
-    dd = rbind(dd, d)
-  }
+  dd = wafer
+  dd$direction = "NULL"
+  dd$direction[(diff(wafer$VG) < 0)] = "Backward"
+  dd$direction[(diff(wafer$VG) >= 0)] = "Forward"
   return(dd)
 }
+
 
 #' Fit curves to multiple wafers
 #'
@@ -125,12 +121,14 @@ fit_all = function(path, maxit=10000, verbose=TRUE,plot=FALSE){
 #' @export
 fit_wafer = function(wafer, trans=trans_device, validate=validate_device,
                      cost_func=area_between_curves, dev_curve=curve_4BARO, 
-                     initparams = c(-10,-30,5,0), maxit=10000,
+                     initparams = NULL, maxit=10000,
                      verbose=TRUE, plot=FALSE){
-  
   wafer = add_forward_backward(wafer)
-  npars = length(initparams);
   uqnames = unique(wafer$name)
+  
+  #Default or user supplied initial parameters?
+  if(is.null(initparams)) initparams = attr(dev_curve,"initparams")
+  npars = length(initparams);
   
   #Prepare for plotting
   #NOTE: Here we turn off parallel so that R can plot to the same output for each device
@@ -151,7 +149,8 @@ fit_wafer = function(wafer, trans=trans_device, validate=validate_device,
       d_forward = d[d$direction == "Forward",]
       datax = d_forward$VG
       datay = log(d_forward$ID)
-      est = optim(initparams, cost_func, device_model=dev_curve, datax=datax, datay=datay, control=list(maxit=maxit))
+      est = optim(initparams, cost_func, attr(cost_func,"derivs"), device_model=dev_curve, 
+                  datax=datax, datay=datay, control=list(maxit=maxit))
       cur_forward_pars = est$par
       cur_forward_value = est$value
       if(plot){
@@ -164,7 +163,8 @@ fit_wafer = function(wafer, trans=trans_device, validate=validate_device,
       d_backward = d[d$direction == "Backward",]
       datax = d_backward$VG
       datay= log(d_backward$ID)
-      est = optim(cur_forward_pars, cost_func, device_model=dev_curve, datax=datax, datay=datay, control=list(maxit=maxit))
+      est = optim(cur_forward_pars, cost_func, attr(cost_func,"derivs"), device_model=dev_curve, 
+                  datax=datax, datay=datay, control=list(maxit=maxit))
       cur_backward_pars = est$par
       cur_backward_value = est$value
       if(plot){
