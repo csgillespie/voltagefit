@@ -3,7 +3,7 @@
 \name{area_between_curves_derivs}
 \alias{area_between_curves}
 \alias{area_between_curves_derivs}
-\title{area_between_curves_derivs}
+\title{Area between curves cost function}
 \usage{
 area_between_curves_derivs(param, device_model, datax, datay)
 
@@ -19,8 +19,6 @@ area_between_curves(param, datax, datay, device_model)
 \item{datay}{the true voltage values for the datax values given.}
 }
 \description{
-area_between_curves_derivs
-
 Cost function to be used during parameter estimation, quantifying the difference 
 between a given model and the true data for a certain set of model parameters.
 The cost defined by this function is based on the total area between the curves generated

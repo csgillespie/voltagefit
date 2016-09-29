@@ -1,4 +1,3 @@
-#' area_between_curves_derivs
 #' @rdname area_between_curves
 #' @inheritParams  area_between_curves
 #' @export
@@ -6,12 +5,32 @@ area_between_curves_derivs = function(param,device_model,datax,datay){
   #get correct derivatives for device model in use
   curve_derivs_func = attr(device_model,"derivs")
   curve_derivs = curve_derivs_func(param,datax)
+  
   #get fitted values for current model/params
   fity = device_model(datax, param)
+  
   #get derivatives
   derivs = 0.5*(diff(datax)^2)*(datay[1:length(datax)-1] + datay[2:length(datax)] - 
             fity[1:length(datax)-1] - fity[2:length(datax)])*(-curve_derivs[,1:length(datax)
               -1]-curve_derivs[,2:length(datax)])
+  rowSums(derivs)
+}
+
+#' @rdname interp_residuals
+#' @inheritParams  interp_residuals
+#' @export
+interp_residuals_derivs = function(param,device_model,datax,datay){
+  #interpolate
+  interp = approx(datax,datay,n = length(datax))
+  #get correct derivatives for device model in use
+  curve_derivs_func = attr(device_model,"derivs")
+  curve_derivs = curve_derivs_func(param,interp$x)
+  
+  #get fitted values for current model/params
+  fity = device_model(interp$x, param)
+  
+  #get derivatives
+  derivs = 2*(fity-interp$y)*(curve_derivs)
   rowSums(derivs)
 }
 
@@ -33,9 +52,10 @@ area_between_curves_derivs = function(param,device_model,datax,datay){
 interp_residuals = function(param, datax, datay, device_model){
   interp = approx(datax,datay,n = length(datax))
   fity = device_model(interp$x, param)
-  res = (fity-datay)^2
+  res = (fity-interp$y)^2
   sum(res[!is.nan(res)])
 }
+attr(interp_residuals,"derivs") <- interp_residuals_derivs
 
 #' Area between curves cost function
 #'

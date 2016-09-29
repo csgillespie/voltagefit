@@ -29,8 +29,8 @@ validate_device = function(wafer) {
 add_forward_backward = function(wafer) {
   dd = wafer
   dd$direction = "NULL"
-  dd$direction[(diff(wafer$VG) < 0)] = "Backward"
-  dd$direction[(diff(wafer$VG) >= 0)] = "Forward"
+  dd$direction[c(1,diff(wafer$VG)) < 0] = "Backward"  #length(diff(wafer)) = length(wafer)-1 
+  dd$direction[c(1,diff(wafer$VG)) >= 0] = "Forward"  #so add c(1,..) to the front for alignment
   return(dd)
 }
 
@@ -173,8 +173,10 @@ fit_wafer = function(wafer, trans=trans_device, validate=validate_device,
         lines(ndx,dev_curve(ndx,cur_backward_pars),col="red")
         title(paste(uqnames[i]," - Backward",sep=""))
       }
+      #this line looks like it's not doing anything, but it is
+      #returning rows to the parallel backend which are then rbind and returned
+      c(cur_forward_pars,cur_forward_value,cur_backward_pars,cur_backward_value)
     }
-    c(cur_forward_pars,cur_forward_value,cur_backward_pars,cur_backward_value)
   }
   
   #Turn parallel back on if plotting
