@@ -20,6 +20,12 @@ and loaded in the usual way
 library("voltagefit")
 ```
 
+To enable parallelisation, run
+```{r eval=FALSE}
+library("doParallel")
+registerDoParallel()
+```
+
 ## Example data
 
 The package contains some example data sets that can be accessed via
@@ -106,13 +112,13 @@ We can now get the mean parameters
 means = mean(fit_man)
 ```
 and plot them
-```{r}
+```{r,fig.width = 8}
 library(ggplot2)
 ggplot(means) + geom_line(aes(x, y, colour=type)) + scale_y_log10() + 
   facet_grid(~direction)
 ```
 
-```{r}
+```{r,fig.width = 8}
 ## Generate a sample of parameters for the underlying curve
 unders = sample(fit_man,  n=20)
 #head(unders)

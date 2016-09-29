@@ -29,7 +29,7 @@ plot.wafer = function(x, y=NULL,  cost=FALSE, ...) {
   invisible(NULL)
 }
 
-#' @importFrom graphics grid hist legend lines mtext par plot
+#' @importFrom graphics grid hist legend lines mtext par plot title
 #' @export
 hist.wafer = function(x, direction="Forward", cost=FALSE, ...) {
   op = par(mar = c(3, 3, 2, 1), mgp = c(2, 0.4, 0), tck = -.01, 
@@ -41,7 +41,7 @@ hist.wafer = function(x, direction="Forward", cost=FALSE, ...) {
     hist(x$cost, panel.first = grid(), xlab = "Cost", 
          main = direction, col="steelblue", ...)
   } else {
-    par(mfrow = c(2, 3))
+    par(mfrow = c(2, 3),oma=c(0,0,2,0))
     par_loc = get_par_loc(x)
     for (i in seq_along(par_loc)){
       hist(x[, par_loc[i]], 
@@ -50,7 +50,7 @@ hist.wafer = function(x, direction="Forward", cost=FALSE, ...) {
            main = "", 
            col="steelblue", ...)
     }
-    mtext(direction, NORTH <- 3, line = 0.7, cex = 1)
+    title(direction, outer=TRUE)
   }
   invisible(NULL)
 }
