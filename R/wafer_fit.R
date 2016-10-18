@@ -128,7 +128,7 @@ fit_wafer = function(wafer, trans=trans_device, validate=validate_device,
   
   #Default or user supplied initial parameters?
   if(is.null(initparams)) initparams = attr(dev_curve,"initparams")
-  npars = length(initparams);
+  npars = length(initparams)
   
   #Prepare for plotting
   #NOTE: Here we turn off parallel so that R can plot to the same output for each device
@@ -141,8 +141,8 @@ fit_wafer = function(wafer, trans=trans_device, validate=validate_device,
   
   #do the main fitting
   i = 0
-  if(verbose) message(paste("Executing on ",getDoParWorkers()," workers.",sep=" "))
-  estall<-foreach(i=1:length(uqnames),.combine=rbind) %dopar% {
+  if(verbose) message(paste("Executing on ", getDoParWorkers(), " workers."))
+  estall = foreach(i=1:length(uqnames), .combine=rbind) %dopar% {
     d = trans(wafer[wafer$name==uqnames[i],])
     if(validate(d)) {
       #forward
@@ -177,6 +177,9 @@ fit_wafer = function(wafer, trans=trans_device, validate=validate_device,
       #returning rows to the parallel backend which are then rbind and returned
       c(cur_forward_pars,cur_forward_value,cur_backward_pars,cur_backward_value)
     }
+  }
+  if(!is.matrix(estall)) {
+    estall = matrix(estall, ncol=length(estall))
   }
   
   #Turn parallel back on if plotting
