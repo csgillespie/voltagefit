@@ -57,10 +57,10 @@ add_forward_backward = function(wafer) {
 #'
 #' @examples
 #' wafers_folder = file.path(path.package("voltagefit"),"extdata") # path to wafers data directory
-#' fit = fit_all(wafers_folder)
+#' fit = fit_all(wafers_folder,dev_curve=curve_5BARO)
 #'
 #' @export
-fit_all = function(path, maxit=10000, verbose=TRUE){
+fit_all = function(path, dev_curve=curve_power, maxit=10000, verbose=TRUE){
   files = list.files(path = path, pattern = "[0-9]+.rds") ## get files to read
   if(verbose) message("Files found: ", paste(files,collapse=" "))
   
