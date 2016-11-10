@@ -75,8 +75,8 @@ data_dir = system.file("extdata/", package="voltagefit")
 all_wafers = fit_all(data_dir, verbose=FALSE)
 ```
 You can also view the parameters
-```{r, fig.keep="none"}
-plot(all_wafers, cost=FALSE)
+```{r,fig.width = 8}
+plot(all_wafers)
 hist(all_wafers)
 ```
 

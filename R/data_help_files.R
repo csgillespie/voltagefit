@@ -1,6 +1,8 @@
 ## Entry in data_help_files.R
 #' @name wafer3737
-#' @aliases wafer3757 wafer3758 wafer3759 wafer4464 wafer4465
+#' @aliases wafer3757 wafer3758 wafer3759 wafer4464 wafer4465 wafer5506
+#' wafer5507 wafer5508 wafer5509 wafer5529 wafer5530 wafer5531 wafer5549
+#' wafer6137 wafer6138 wafer6139 wafer6140
 #' 
 #' @title Voltage results from a single wafer
 #' 

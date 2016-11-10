@@ -8,6 +8,18 @@
 \alias{wafer3759}
 \alias{wafer4464}
 \alias{wafer4465}
+\alias{wafer5506}
+\alias{wafer5507}
+\alias{wafer5508}
+\alias{wafer5509}
+\alias{wafer5529}
+\alias{wafer5530}
+\alias{wafer5531}
+\alias{wafer5549}
+\alias{wafer6137}
+\alias{wafer6138}
+\alias{wafer6139}
+\alias{wafer6140}
 \title{Voltage results from a single wafer}
 \format{A data frame consisting of the fields:
   \itemize{             
