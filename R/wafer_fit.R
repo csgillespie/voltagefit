@@ -67,7 +67,7 @@ fit_all = function(path, dev_curve=curve_power, maxit=10000, verbose=TRUE){
   for(i in 1:length(files)){
     wafer = readRDS(file.path(path, files[i])) ## read a file/wafer
     if(verbose) message("Reading: ", files[i])
-    fit = fit_wafer(wafer, maxit=maxit, verbose=verbose) ## fit model to that wafer
+    fit = fit_wafer(wafer, maxit=maxit,dev_curve = dev_curve, verbose=verbose) ## fit model to that wafer
     
     if(i==1){
       param = fit

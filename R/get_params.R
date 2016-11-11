@@ -12,15 +12,6 @@
 #'      \item{week}{The week to which the curve corresponds}
 #'      \item{X1 ... X6}{The parameters characterising the week curve}
 #'   }
-#'   
-#' @examples
-#' wafers_folder = file.path(path.package("voltagefit"),"extdata") # path to wafers data directory
-#' fitted = fit_all(wafers_folder,dev_curve=curve_5BARO)
-#' design = data.frame(week = c(1,1,1,1,2,2), wafer = unique(fitted$id), 
-#'         replicate = 1:6, treatment = rep(1,6))
-#' fitman = fit_manova(fitted, design)
-#' get_params(fitman)
-#'
 #' @export
 get_params = function(fm, combine=FALSE) {
   baseline = baseline_params(fm)

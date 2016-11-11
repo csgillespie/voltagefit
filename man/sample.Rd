@@ -24,12 +24,4 @@ A data.frame consisting of the fields:
 \description{
 Generate sample forward and backward underlying curves.
 }
-\examples{
-wafers_folder = file.path(path.package("voltagefit"),"extdata") # path to wafers data directory
-fitted = fit_all(wafers_folder,dev_curve=curve_5BARO)
-design = data.frame(week = c(1,1,1,1,2,2), wafer = unique(fitted$id), 
-        replicate = 1:6, treatment = rep(1,6))
-fitman = fit_manova(fitted, design)
-samples = sample(fitman)
-}
 
