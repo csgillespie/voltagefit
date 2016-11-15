@@ -11,7 +11,7 @@ output: rmarkdown::html_vignette
 library("voltagefit")
 library("doParallel")
 registerDoParallel(7)
-data("voltagefitWafers")
+data("voltagefitWafers_new")
 wafers = grep("wafer[0-9]+",ls(), value=TRUE)
 ```
 
