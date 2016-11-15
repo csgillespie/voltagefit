@@ -51,14 +51,6 @@ sample_parameters = function(fm, n){
 #'      \item{X1 ... X6}{The parameters characterising the curve}
 #'      \item{type}{Baseline, treatment, or week.}
 #'   }
-#'   
-#' @examples
-#' wafers_folder = file.path(path.package("voltagefit"),"extdata") # path to wafers data directory
-#' fitted = fit_all(wafers_folder)
-#' design = data.frame(week = c(1,1,1,1,2,2), wafer = unique(fitted$id), 
-#'         replicate = 1:6, treatment = rep(1,6))
-#' fitman = fit_manova(fitted, design)
-#' samples = sample(fitman)
 #' @export
 sample = function(x, n, ...)
   UseMethod("sample")
