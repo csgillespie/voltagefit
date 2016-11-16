@@ -147,3 +147,4 @@ curve_power = function(x, param){
 }
 attr(curve_power,"initparams") <- c(-3.45,-14,0.175,-0.5,-30)
 attr(curve_power,"name") <- "curve_power"
+attr(curve_power,"parscale") <- c(1,2.4,1.1,0.23,2.1)

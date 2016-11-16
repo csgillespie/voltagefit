@@ -19,7 +19,7 @@ plot_curves = function(x,dir="Forward") {
   g = ggplot(subset(wafer, direction==dir)) + geom_line(aes(VG, abs(ID), group=name), alpha=0.1) + 
     scale_y_log10() + labs(title =paste("wafer",wafer$wafer_id[1]," - ",dir,sep=""))
   g + geom_line(data=trans_device(data.frame(VG=xv, ID = exp(curve(xv, param )))), 
-                aes(VG, ID), col="steelblue")
+                aes(VG, ID), col="red2")
 }
 
 #' @export

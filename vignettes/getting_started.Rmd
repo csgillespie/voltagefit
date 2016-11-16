@@ -99,12 +99,12 @@ We then fit a MANOVA model, using the parameter values as the response
 fit_man = fit_manova(all_wafers, design)
 (params = get_params(fit_man))
 ```
-<!-- MANOVA is just a multivariate version of the ANOVA table. As such, we can  -->
-<!-- obtain a $p$-value for week differences using -->
-<!-- ```{r, results="hide"} -->
-<!-- #fit_man$forward$man_w -->
-<!-- #summary(fit_man$backward$man_w) -->
-<!-- ``` -->
+MANOVA is just a multivariate version of the ANOVA table. As such, we can
+obtain a $p$-value for week differences using
+```{r}
+fit_man$forward$man_w
+summary(fit_man$backward$man_w)
+```
 
 
 We can now get the mean parameters
