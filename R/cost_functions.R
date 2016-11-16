@@ -36,7 +36,7 @@ interp_residuals = function(param, datax, datay, device_model){
 #' @export
 area_between_curves = function(param, datax, datay, device_model){
   fity = device_model(datax, param)
-  areas = (datay > -25 | datax < -2)*(0.5*diff(datax)*(datay[1:length(datax)-1] + datay[2:length(datax)] 
+  areas = (datay[1:length(datax)-1] > -25 | datax[1:length(datax)-1] < -2)*(0.5*diff(datax)*(datay[1:length(datax)-1] + datay[2:length(datax)] 
                         - fity[1:length(datax)-1] - fity[2:length(datax)]))^2
   sum(areas)
 }

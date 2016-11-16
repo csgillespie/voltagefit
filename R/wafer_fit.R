@@ -79,10 +79,10 @@ add_forward_backward = function(wafer) {
 #'
 #' @examples
 #' wafers_folder = file.path(path.package("voltagefit"),"extdata") # path to wafers data directory
-#' fit = fit_all(wafers_folder,dev_curve=curve_5BARO)
+#' fit = fit_all(wafers_folder)
 #'
 #' @export
-fit_all = function(path, dev_curve=curve_power, maxit=10000, verbose=TRUE){
+fit_all = function(path, dev_curve=curve_power, maxit=1000, verbose=TRUE){
   files = list.files(path = path, pattern = "[0-9]+.rds") ## get files to read
   if(verbose) message("Files found: ", paste(files,collapse=" "))
   
@@ -117,7 +117,7 @@ fit_all = function(path, dev_curve=curve_power, maxit=10000, verbose=TRUE){
 #' @param initparams  (Optional) Inital parameter estimation
 #' @param maxit       (Optional) Maxiumum number of iterations for use in optimiser (Default: 10000)
 #' @param verbose     (Optional) Print verbose output (Default: \code{TRUE})
-#' @param plotall     (Optional) Plot all devices and fitted curves (Default: \code{FALSE})
+#' @param plot     (Optional) Plot all devices and fitted curves (Default: \code{FALSE})
 #' 
 #' @return A data.frame consisting of the fields:
 #'   \describe{
@@ -142,14 +142,15 @@ fit_all = function(path, dev_curve=curve_power, maxit=10000, verbose=TRUE){
 #' @export
 fit_wafer = function(wafer, trans=trans_device, validate=validate_device,
                      cost_func=area_between_curves, dev_curve=curve_power,
-                     initparams = NULL, maxit=100000,verbose=TRUE,plot=FALSE){
+                     initparams = NULL, maxit=1000, verbose=TRUE,plot=FALSE){
   wafer = add_forward_backward(wafer)
   wafer = trans_filter_device(wafer,validate,trans,verbose)
   uqnames = unique(wafer$name)
   
   #Default or user supplied initial parameters?
   if(is.null(initparams)) initparams = attr(dev_curve,"initparams")
-  psc = attr(dev_curve,"parscale")
+  psc = rep(1,length(initparams))
+  if(!is.null(attr(dev_curve,"parscale"))) psc = attr(dev_curve,"parscale")
   npars = length(initparams);
   
   #do the main fitting
@@ -165,7 +166,6 @@ fit_wafer = function(wafer, trans=trans_device, validate=validate_device,
                 datax=datax, datay=datay, control=list(maxit=maxit,parscale=psc),method="BFGS")
     cur_forward_pars = est$par
     cur_forward_value = est$value
-    
     #backward
     d_backward = d[d$direction == "Backward",]
     datax = d_backward$VG
