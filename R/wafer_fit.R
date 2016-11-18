@@ -82,7 +82,7 @@ add_forward_backward = function(wafer) {
 #' fit = fit_all(wafers_folder)
 #'
 #' @export
-fit_all = function(path, dev_curve=curve_power, maxit=1000, verbose=TRUE){
+fit_all = function(path, dev_curve=curve_piecewise, maxit=10000, verbose=TRUE){
   files = list.files(path = path, pattern = "[0-9]+.rds") ## get files to read
   if(verbose) message("Files found: ", paste(files,collapse=" "))
   
@@ -141,8 +141,8 @@ fit_all = function(path, dev_curve=curve_power, maxit=1000, verbose=TRUE){
 #' 
 #' @export
 fit_wafer = function(wafer, trans=trans_device, validate=validate_device,
-                     cost_func=area_between_curves, dev_curve=curve_power,
-                     initparams = NULL, maxit=1000, verbose=TRUE,plot=FALSE){
+                     cost_func=area_between_curves, dev_curve=curve_piecewise,
+                     initparams = NULL, maxit=10000, verbose=TRUE,plot=FALSE){
   wafer = add_forward_backward(wafer)
   wafer = trans_filter_device(wafer,validate,trans,verbose)
   uqnames = unique(wafer$name)
@@ -163,15 +163,20 @@ fit_wafer = function(wafer, trans=trans_device, validate=validate_device,
     datax = d_forward$VG
     datay = log(d_forward$ID)
     est = optim(initparams, cost_func, device_model=dev_curve, 
-                datax=datax, datay=datay, control=list(maxit=maxit,parscale=psc),method="BFGS")
+                upper = attr(dev_curve,"for_upper"),
+                lower = attr(dev_curve,"for_lower"),
+                datax=datax, datay=datay, control=list(maxit=maxit,parscale=psc),method="L-BFGS-B")
     cur_forward_pars = est$par
     cur_forward_value = est$value
     #backward
     d_backward = d[d$direction == "Backward",]
     datax = d_backward$VG
     datay= log(d_backward$ID)
-    est = optim(cur_forward_pars, cost_func, device_model=dev_curve, 
-                datax=datax, datay=datay, control=list(maxit=maxit,parscale=psc),method="BFGS")
+    est = optim(attr(dev_curve,"back_upper"), cost_func, device_model=dev_curve, 
+                datax=datax, datay=datay, 
+                upper = attr(dev_curve,"back_upper"),
+                lower = attr(dev_curve,"back_lower"),
+                control=list(maxit=maxit,parscale=psc),method="L-BFGS-B")
     cur_backward_pars = est$par
     cur_backward_value = est$value
     

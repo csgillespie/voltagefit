@@ -15,8 +15,8 @@ trans_filter_device(wafer, validate = validate_device, trans = trans_device,
   verbose = TRUE)
 
 fit_wafer(wafer, trans = trans_device, validate = validate_device,
-  cost_func = area_between_curves, dev_curve = curve_power,
-  initparams = NULL, maxit = 1000, verbose = TRUE, plot = FALSE)
+  cost_func = area_between_curves, dev_curve = curve_piecewise,
+  initparams = NULL, maxit = 10000, verbose = TRUE, plot = FALSE)
 }
 \arguments{
 \item{wafer}{Data from a single wafer}

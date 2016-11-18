@@ -4,7 +4,7 @@
 \alias{fit_all}
 \title{Fit curves to multiple wafers}
 \usage{
-fit_all(path, dev_curve = curve_power, maxit = 1000, verbose = TRUE)
+fit_all(path, dev_curve = curve_piecewise, maxit = 10000, verbose = TRUE)
 }
 \arguments{
 \item{path}{Directory containing multiple .rds files, each containing a single wafer}
