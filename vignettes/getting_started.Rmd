@@ -54,7 +54,7 @@ wafer_3737 = readRDS(file.path(data_dir, "3737.rds"))
 ```
 To fit the model to a single wafer, we use `fit_wafer`
 ```{r}
-fit_3737 = fit_wafer(wafer_3737, verbose=FALSE)
+fit_3737 = fit_wafer(wafer_3737)
 fit_3737
 ```
 The object `fit_3737` is a data frame, with `r ncol(fit_3737)` columns and 
@@ -69,10 +69,10 @@ columns are
 ## Multiple wafers
 
 First load in example data. The data corresponds 
-```{r}
-data_dir = system.file("extdata/", package="voltagefit")
+```{r, message=FALSE}
+data_dir = file.path(path.package("voltagefit"),"extdata")
 ## In real life, pull data from a database
-all_wafers = fit_all(data_dir, verbose=FALSE)
+all_wafers = fit_all(data_dir)
 ```
 You can also view the parameters
 ```{r,fig.width = 8}
@@ -99,12 +99,12 @@ We then fit a MANOVA model, using the parameter values as the response
 fit_man = fit_manova(all_wafers, design)
 (params = get_params(fit_man))
 ```
-<!-- MANOVA is just a multivariate version of the ANOVA table. As such, we can  -->
-<!-- obtain a $p$-value for week differences using -->
-<!-- ```{r, results="hide"} -->
-<!-- #fit_man$forward$man_w -->
-<!-- #summary(fit_man$backward$man_w) -->
-<!-- ``` -->
+MANOVA is just a multivariate version of the ANOVA table. As such, we can
+obtain a $p$-value for week differences using
+```{r}
+fit_man$forward$man_w
+#summary(fit_man$backward$man_w)
+```
 
 
 We can now get the mean parameters

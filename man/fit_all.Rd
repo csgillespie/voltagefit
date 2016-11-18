@@ -4,7 +4,7 @@
 \alias{fit_all}
 \title{Fit curves to multiple wafers}
 \usage{
-fit_all(path, dev_curve = curve_power, maxit = 10000, verbose = TRUE)
+fit_all(path, dev_curve = curve_piecewise, maxit = 10000, verbose = TRUE)
 }
 \arguments{
 \item{path}{Directory containing multiple .rds files, each containing a single wafer}
@@ -34,7 +34,7 @@ returning the parameters and cost for both forward and backwards curves.
 }
 \examples{
 wafers_folder = file.path(path.package("voltagefit"),"extdata") # path to wafers data directory
-fit = fit_all(wafers_folder,dev_curve=curve_5BARO)
+fit = fit_all(wafers_folder)
 
 }
 

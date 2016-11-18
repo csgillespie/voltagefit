@@ -147,3 +147,36 @@ curve_power = function(x, param){
 }
 attr(curve_power,"initparams") <- c(-3.45,-14,0.175,-0.5,-30)
 attr(curve_power,"name") <- "curve_power"
+attr(curve_power,"parscale") <- c(1,1,1,1,1)
+
+
+#'Piecewise power model voltage curve
+#'
+#'Model voltage curve based on a piecewise constant, quadratic then power fit.
+#'
+#' @inheritParams  curve_tanh
+#' @param param         list consisting of 8 parameters for the curve function:
+#' 
+#' @return A range of values, corresponding to the value of the curve for 
+#' the given parameters, over the provided range of x values. 
+#'
+#' @export
+curve_piecewise = function(x, param){
+  v = param[3] + param[4]*(pmax(x-param[5],0))^param[6]
+  ifelse(x<param[1],
+    log(1e-13)
+  ,
+    ifelse(v<param[2],
+      param[2] + param[7]*x+ param[8]*x*x
+    ,
+      v
+    )
+  )
+}
+attr(curve_piecewise,"initparams") <- c(-2, -25, -3.45,  -14, -0.175, -0.5,    0,    0)
+attr(curve_piecewise,"for_upper") <- c(-1, -20,     -1,  -1,      0,    0,    0.5,    1)
+attr(curve_piecewise,"for_lower") <- c(-3, -30,    -10, -20,     -1,   -5,   -1,   0)
+attr(curve_piecewise,"back_upper") <- c(-100  , -20,     -1,  -1,      0,    0,    0.5,    1)
+attr(curve_piecewise,"back_lower") <- c(-100.1, -30,    -10, -20,     -1,   -5,   -1,   0)
+attr(curve_piecewise,"name") <- "curve_piecewise"
+attr(curve_piecewise,"parscale") <- c(2.45,4.5,0.9,2.2,0.23,0.14,5.5,2)
