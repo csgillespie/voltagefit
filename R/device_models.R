@@ -147,4 +147,22 @@ curve_power = function(x, param){
 }
 attr(curve_power,"initparams") <- c(-3.45,-14,0.175,-0.5,-30)
 attr(curve_power,"name") <- "curve_power"
-attr(curve_power,"parscale") <- c(1,2.4,1.1,0.23,2.1)
+attr(curve_power,"parscale") <- c(1,1,1,1,1)
+
+
+#' @export
+curve_piecewise = function(x, param){
+  v = param[4] + param[5]*(pmax(x-param[6],0))^param[7]
+  ifelse(x<param[1],
+    param[2]
+  ,
+    ifelse(v<param[3],
+      param[3] + param[8]*x
+    ,
+      v
+    )
+  )
+}
+attr(curve_piecewise,"initparams") <- c(-2,log(1e-13),-28,-3.45,-14,-0.175,-0.5,0)
+attr(curve_piecewise,"name") <- "curve_piecewise"
+attr(curve_piecewise,"parscale") <- c(2.45,1.2,4.5,0.9,2.2,0.23,0.14,5.5)
