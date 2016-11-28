@@ -1,4 +1,4 @@
-# Wafer validation and transformation functions.
+#Wafer validation and transformation functions.
 #
 #' @rdname fit_wafer
 #' @export
@@ -11,14 +11,36 @@ trans_device = function(wafer) {
 #' @rdname fit_wafer
 #' @export
 validate_device = function(wafer) {
-  wafer = wafer[wafer$direction == "Forward", ]
-  ID = wafer[wafer$VG < -5, "ID"]
-  if(any(ID > 1e-9)) return(FALSE)
+  waferf = wafer[wafer$direction == "Forward", ]
+  ID = waferf[waferf$VG < -4, "ID"]
+  if(any(ID > 1e-10)) return(FALSE)
   
-  ID = wafer[wafer$VG > 5, "ID"]
+  ID = waferf[waferf$VG > 4, "ID"]
+  if(any(ID < 1e-5)) return(FALSE)
+  
+  waferb = wafer[wafer$direction == "Backward", ]
+  ID = waferb[waferb$VG < -4, "ID"]
+  if(any(ID > 1e-10)) return(FALSE)
+  
+  ID = waferb[waferb$VG > 4, "ID"]
   if(any(ID < 1e-5)) return(FALSE)
   return(TRUE)
 }
+
+#' @rdname fit_wafer
+#' @export
+trans_filter_device = function(wafer,validate=validate_device,trans=trans_device,verbose=TRUE) {
+  filtered_wafer = trans(wafer)
+  uqnames = unique(wafer$name)
+  for(i in 1:length(uqnames)){
+    if(!validate(wafer[wafer$name==uqnames[i],])) {
+      filtered_wafer = filtered_wafer[filtered_wafer$name!=uqnames[i],]
+      if(verbose) message(paste("Rejecting device",uqnames[i],sep=" "))
+    }
+  }
+  filtered_wafer
+}
+
 
 #' Determine forward/backward curve
 #' 
@@ -60,14 +82,14 @@ add_forward_backward = function(wafer) {
 #' fit = fit_all(wafers_folder)
 #'
 #' @export
-fit_all = function(path, maxit=10000, verbose=TRUE,plot=FALSE){
-  files = list.files(path = path, pattern = ".rds") ## get files to read
-  if(verbose) message("Files found: ", paste(files, collapse=" "))
+fit_all = function(path, dev_curve=curve_piecewise, maxit=10000, verbose=TRUE){
+  files = list.files(path = path, pattern = "[0-9]+.rds") ## get files to read
+  if(verbose) message("Files found: ", paste(files,collapse=" "))
   
   for(i in 1:length(files)){
     wafer = readRDS(file.path(path, files[i])) ## read a file/wafer
     if(verbose) message("Reading: ", files[i])
-    fit = fit_wafer(wafer, maxit=maxit, verbose=verbose,plot=plot) ## fit model to that wafer
+    fit = fit_wafer(wafer, maxit=maxit,dev_curve = dev_curve, verbose=verbose) ## fit model to that wafer
     
     if(i==1){
       param = fit
@@ -85,8 +107,7 @@ fit_all = function(path, maxit=10000, verbose=TRUE,plot=FALSE){
 #'
 #' Fits curves to a wafer and returns the curve parameters and resulting
 #' cost for both forward and backwards curves. Wafers can be validated and
-#' transformed before fitting. Devices are fitted in parallel automatically, 
-#' however, note that \code{plot=TRUE} temporarily disables this parallelisation.
+#' transformed before fitting. Devices are fitted in parallel automatically.
 #'
 #' @param wafer       Data from a single wafer
 #' @param trans       (Optional) Wafer ransform function
@@ -96,7 +117,7 @@ fit_all = function(path, maxit=10000, verbose=TRUE,plot=FALSE){
 #' @param initparams  (Optional) Inital parameter estimation
 #' @param maxit       (Optional) Maxiumum number of iterations for use in optimiser (Default: 10000)
 #' @param verbose     (Optional) Print verbose output (Default: \code{TRUE})
-#' @param plot        (Optional) Plot each devices with its fitted model (Default: \code{FALSE})
+#' @param plot     (Optional) Plot all devices and fitted curves (Default: \code{FALSE})
 #' 
 #' @return A data.frame consisting of the fields:
 #'   \describe{
@@ -120,75 +141,69 @@ fit_all = function(path, maxit=10000, verbose=TRUE,plot=FALSE){
 #' 
 #' @export
 fit_wafer = function(wafer, trans=trans_device, validate=validate_device,
-                     cost_func=area_between_curves, dev_curve=curve_4BARO, 
-                     initparams = NULL, maxit=10000,
-                     verbose=TRUE, plot=FALSE){
+                     cost_func=area_between_curves, dev_curve=curve_piecewise,
+                     initparams = NULL, maxit=10000, verbose=TRUE,plot=FALSE){
   wafer = add_forward_backward(wafer)
+  wafer = trans_filter_device(wafer,validate,trans,verbose)
   uqnames = unique(wafer$name)
   
   #Default or user supplied initial parameters?
   if(is.null(initparams)) initparams = attr(dev_curve,"initparams")
-  npars = length(initparams)
-  
-  #Prepare for plotting
-  #NOTE: Here we turn off parallel so that R can plot to the same output for each device
-  if(plot){
-    noWorkers = getDoParWorkers()
-    registerDoParallel(1)
-    op = par(mfrow=c(4,4))
-    on.exit(par(op))
-    if(verbose) message("Plotting is enabled")
-  }
+  psc = rep(1,length(initparams))
+  if(!is.null(attr(dev_curve,"parscale"))) psc = attr(dev_curve,"parscale")
+  npars = length(initparams);
   
   #do the main fitting
   i = 0
-  if(verbose) message(paste("Executing on ", getDoParWorkers(), " workers."))
-  estall = foreach(i=1:length(uqnames), .combine=rbind) %dopar% {
-    d = trans(wafer[wafer$name==uqnames[i],])
-    if(validate(d)) {
-      #forward
+  if(verbose) message(paste("Executing on ",getDoParWorkers()," workers.",sep=" "))
+  estall<-foreach(i=1:length(uqnames),.combine=rbind) %dopar% {
+    d = wafer[wafer$name==uqnames[i],]
+    #forward
+    d_forward = d[d$direction == "Forward",]
+    datax = d_forward$VG
+    datay = log(d_forward$ID)
+    est = optim(initparams, cost_func, device_model=dev_curve, 
+                upper = attr(dev_curve,"for_upper"),
+                lower = attr(dev_curve,"for_lower"),
+                datax=datax, datay=datay, control=list(maxit=maxit,parscale=psc),method="L-BFGS-B")
+    cur_forward_pars = est$par
+    cur_forward_value = est$value
+    #backward
+    d_backward = d[d$direction == "Backward",]
+    datax = d_backward$VG
+    datay= log(d_backward$ID)
+    est = optim(attr(dev_curve,"back_upper"), cost_func, device_model=dev_curve, 
+                datax=datax, datay=datay, 
+                upper = attr(dev_curve,"back_upper"),
+                lower = attr(dev_curve,"back_lower"),
+                control=list(maxit=maxit,parscale=psc),method="L-BFGS-B")
+    cur_backward_pars = est$par
+    cur_backward_value = est$value
+    
+    #this line looks like it's not doing anything, but it is
+    #returning rows to the parallel backend which are then rbind and returned
+    c(cur_forward_pars,cur_forward_value,cur_backward_pars,cur_backward_value)
+  }
+  
+  if(plot == TRUE){
+    for(i in 1:length(uqnames)){
+      d = wafer[wafer$name==uqnames[i],]
       d_forward = d[d$direction == "Forward",]
       datax = d_forward$VG
       datay = log(d_forward$ID)
-      est = optim(initparams, cost_func, attr(cost_func,"derivs"), device_model=dev_curve, 
-                  datax=datax, datay=datay, control=list(maxit=maxit))
-      cur_forward_pars = est$par
-      cur_forward_value = est$value
-      if(plot){
-        ndx = seq(-10,10,0.01)
-        plot(datax,log(d_forward$ID),xlim=c(-10,10),ylim=c(-30,-5),xlab="V",ylab="I");
-        lines(ndx,dev_curve(ndx,cur_forward_pars),col="red")
-        title(paste(uqnames[i]," - Forward",sep=""))
-      }
-      #backward
+      plot(datax,datay,t='l')
+      lines(datax,dev_curve(datax,estall[i, 1:npars, drop=FALSE]),col=2)
       d_backward = d[d$direction == "Backward",]
       datax = d_backward$VG
-      datay= log(d_backward$ID)
-      est = optim(cur_forward_pars, cost_func, attr(cost_func,"derivs"), device_model=dev_curve, 
-                  datax=datax, datay=datay, control=list(maxit=maxit))
-      cur_backward_pars = est$par
-      cur_backward_value = est$value
-      if(plot){
-        ndx = seq(-10,10,0.01)
-        plot(datax,log(d_backward$ID),xlim=c(-10,10),ylim=c(-30,-5),xlab="V",ylab="I")
-        lines(ndx,dev_curve(ndx,cur_backward_pars),col="red")
-        title(paste(uqnames[i]," - Backward",sep=""))
-      }
-      #this line looks like it's not doing anything, but it is
-      #returning rows to the parallel backend which are then rbind and returned
-      c(cur_forward_pars,cur_forward_value,cur_backward_pars,cur_backward_value)
+      datay = log(d_backward$ID)
+      plot(datax,datay,t='l')
+      lines(datax,dev_curve(datax,estall[i, (npars+2):(2*npars+1), drop=FALSE]),col=2)
     }
   }
-  if(!is.matrix(estall)) {
-    estall = matrix(estall, ncol=length(estall))
-  }
-  
-  #Turn parallel back on if plotting
-  if(plot) registerDoParallel(noWorkers) 
   
   #Build results data.frame
-  for_params  = apply(estall[, 1:npars, drop=FALSE], 2, weighted.mean, estall[,npars+1], na.rm=TRUE)
-  back_params = apply(estall[, (npars+2):(2*npars+1), drop=FALSE], 2, weighted.mean, estall[,2*npars+2], na.rm=TRUE)
+  for_params  = apply(estall[, 1:npars, drop=FALSE], 2, weighted.mean, 1/estall[,npars+1], na.rm=TRUE)
+  back_params = apply(estall[, (npars+2):(2*npars+1), drop=FALSE], 2, weighted.mean, 1/estall[,2*npars+2], na.rm=TRUE)
   
   results = data.frame(rbind(for_params, back_params), 
                        cost = c(mean(estall[,npars+1]), mean(estall[,2*npars+2])),
@@ -196,6 +211,8 @@ fit_wafer = function(wafer, trans=trans_device, validate=validate_device,
                        direction= c("Forward", "Backward"), stringsAsFactors = FALSE)
   rownames(results) = NULL
   
+  attr(results,"wafer_back_forward") <- wafer
+  attr(results,"dev_curve") <- dev_curve
   class(results) = c("wafer", class(results))
   return(results)
 }

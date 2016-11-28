@@ -3,6 +3,7 @@
 \name{trans_device}
 \alias{fit_wafer}
 \alias{trans_device}
+\alias{trans_filter_device}
 \alias{validate_device}
 \title{Fit curves to a wafer}
 \usage{
@@ -10,16 +11,21 @@ trans_device(wafer)
 
 validate_device(wafer)
 
+trans_filter_device(wafer, validate = validate_device, trans = trans_device,
+  verbose = TRUE)
+
 fit_wafer(wafer, trans = trans_device, validate = validate_device,
-  cost_func = area_between_curves, dev_curve = curve_4BARO,
+  cost_func = area_between_curves, dev_curve = curve_piecewise,
   initparams = NULL, maxit = 10000, verbose = TRUE, plot = FALSE)
 }
 \arguments{
 \item{wafer}{Data from a single wafer}
 
+\item{validate}{(Optional) Wafer validate function}
+
 \item{trans}{(Optional) Wafer ransform function}
 
-\item{validate}{(Optional) Wafer validate function}
+\item{verbose}{(Optional) Print verbose output (Default: \code{TRUE})}
 
 \item{cost_func}{(Optional) Cost function}
 
@@ -29,9 +35,7 @@ fit_wafer(wafer, trans = trans_device, validate = validate_device,
 
 \item{maxit}{(Optional) Maxiumum number of iterations for use in optimiser (Default: 10000)}
 
-\item{verbose}{(Optional) Print verbose output (Default: \code{TRUE})}
-
-\item{plot}{(Optional) Plot each devices with its fitted model (Default: \code{FALSE})}
+\item{plot}{(Optional) Plot all devices and fitted curves (Default: \code{FALSE})}
 }
 \value{
 A data.frame consisting of the fields:
@@ -46,8 +50,7 @@ A data.frame consisting of the fields:
 \description{
 Fits curves to a wafer and returns the curve parameters and resulting
 cost for both forward and backwards curves. Wafers can be validated and
-transformed before fitting. Devices are fitted in parallel automatically, 
-however, note that \code{plot=TRUE} temporarily disables this parallelisation.
+transformed before fitting. Devices are fitted in parallel automatically.
 }
 \examples{
 fit_wafer(wafer3737)

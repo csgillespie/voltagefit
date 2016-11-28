@@ -29,6 +29,7 @@ datax = sample_forward_curve$VG
 Using these values, we can construct a model curve using any viable parameters we like.
 
 ```{r,fig.width = 7,fig.height = 4}
+
 param = c(-10,-20,1,1)
 simy = curve_4BARO(datax, param);
 sim_curve = data.frame(datax=datax,simy=exp(simy))
@@ -53,7 +54,7 @@ for (i in 1:100) {
 ggplot(data=sim_curves, aes(x=VG, y=ID, group=name,color=name)) + geom_line() + scale_y_log10() +
   ylab("ID") + xlab("VG") + theme(legend.position="none")
 
-fit_wafer(sim_curves)
+fit_wafer(sim_curves,dev_curve=curve_4BARO)
 ```
 
 The estimated parameters match the means pretty well. Let's add some noise to the simulated curves.
@@ -75,7 +76,7 @@ for (i in 1:100) {
 ggplot(data=sim_curves, aes(x=VG, y=ID, group=name,color=name)) + geom_line() + scale_y_log10() +
   ylab("ID") + xlab("VG") + theme(legend.position="none")
 
-fit_wafer(sim_curves)
+fit_wafer(sim_curves,dev_curve=curve_4BARO)
 ```
 
 Still pretty good! Let's make the errors larger.
@@ -93,10 +94,10 @@ for (i in 1:100) {
                 wafer_id=1,id=1,ERF=1,row=1,col=1,comments="",test_num=1,test_date="1",
                 result=-1))
 }
-ggplot(data=sim_curves, aes(x=VG, y=ID, group=name,color=name)) + geom_line() + scale_y_log10() +
-  ylab("ID") + xlab("VG") + theme(legend.position="none")
+ggplot(data=sim_curves, aes(x=VG, y=ID, group=name,color=name)) + geom_line() + 
+  scale_y_log10() + ylab("ID") + xlab("VG") + theme(legend.position="none")
 
-(fit = fit_wafer(sim_curves))
+(fit = fit_wafer(sim_curves,dev_curve=curve_4BARO))
 simy = curve_4BARO(datax, c(fit$X1[1],fit$X1[1],fit$X3[1],fit$X4[1]));
 sim_curve = data.frame(datax=datax,simy=exp(simy))
 ggplot(data=sim_curve, aes(x=datax, y=simy)) + geom_line() + scale_y_log10() +
@@ -116,7 +117,7 @@ for (i in 1:100) {
 ggplot(data=sim_curves, aes(x=VG, y=ID, group=name,color=name)) + geom_line() + scale_y_log10() +
   ylab("ID") + xlab("VG") + theme(legend.position="none")
 
-(fit = fit_wafer(sim_curves))
+(fit = fit_wafer(sim_curves,dev_curve=curve_4BARO))
 ```
 Values are produced, but probably don't mean anything.
 

@@ -4,16 +4,16 @@
 \alias{fit_all}
 \title{Fit curves to multiple wafers}
 \usage{
-fit_all(path, maxit = 10000, verbose = TRUE, plot = FALSE)
+fit_all(path, dev_curve = curve_piecewise, maxit = 10000, verbose = TRUE)
 }
 \arguments{
 \item{path}{Directory containing multiple .rds files, each containing a single wafer}
 
+\item{dev_curve}{(Optional) Model device voltage curve}
+
 \item{maxit}{(Optional) Maxiumum number of iterations for use in optimiser (Default: 10000)}
 
 \item{verbose}{(Optional) Print verbose output (Default: \code{TRUE})}
-
-\item{plot}{(Optional) Plot each devices with its fitted model (Default: \code{FALSE})}
 }
 \value{
 A data.frame consisting of the fields:

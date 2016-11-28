@@ -23,13 +23,4 @@ A data.frame consisting of the fields:
 Calculate the parameters characterising both the forward and backward curves for
 each week present in a fitted manova, provided by \code{\link{fit_manova}}.
 }
-\examples{
-wafers_folder = file.path(path.package("voltagefit"),"extdata") # path to wafers data directory
-fitted = fit_all(wafers_folder)
-design = data.frame(week = c(1,1,1,1,2,2), wafer = unique(fitted$id), 
-        replicate = 1:6, treatment = rep(1,6))
-fitman = fit_manova(fitted, design)
-get_params(fitman)
-
-}
 
