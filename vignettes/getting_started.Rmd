@@ -54,7 +54,7 @@ wafer_3737 = readRDS(file.path(data_dir, "3737.rds"))
 ```
 To fit the model to a single wafer, we use `fit_wafer`
 ```{r}
-fit_3737 = fit_wafer(wafer_3737, verbose=FALSE)
+fit_3737 = fit_wafer(wafer_3737, verbose=FALSE, plot = T)
 fit_3737
 ```
 The object `fit_3737` is a data frame, with `r ncol(fit_3737)` columns and 
@@ -64,7 +64,7 @@ columns are
   * `id`: a unique idenfier for the wafer;
   * `cost`: the error term from the curve fitting process;
   * `direction`: `Forward` or `Backward`
-  * `X1`, ..., `X6`: Parameters relating to the logistic model.
+  * `X1`, ...: Parameters relating to the model.
 
 ## Multiple wafers
 
@@ -114,19 +114,19 @@ means = mean(fit_man)
 and plot them
 ```{r,fig.width = 8}
 library(ggplot2)
-ggplot(means) + geom_line(aes(x, y, colour=type)) + scale_y_log10() + 
+#colnames(means)[1:2] = c("VG", "ID")
+ggplot(means) + geom_line(aes(VG, ID, colour=type)) + scale_y_log10() + 
   facet_grid(~direction)
 ```
 
 ```{r,fig.width = 8}
 ## Generate a sample of parameters for the underlying curve
-unders = sample(fit_man,  n=20)
-#head(unders)
-
-#unders = dd
-ggplot(unders$samples) + 
-  geom_line(aes(x, y, group=sim_no, colour=type)) + scale_y_log10() + 
-  facet_grid(~direction)
+unders = sample(fit_man,  n=10)
+ss = trans_device(unders$samples)
+ggplot(ss) + 
+  geom_line(aes(VG, ID, group=sim), alpha=0.4) + scale_y_log10() + 
+  facet_grid(type~direction) +
+  geom_line(data=means, aes(VG, ID), colour="steelblue")
 
 ```
 

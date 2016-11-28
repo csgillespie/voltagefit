@@ -37,7 +37,7 @@ get_params = function(fm, combine=FALSE) {
 week_params = function(fm) {
   if(fm$no_week == 1) return(NULL)
   no_pars = ncol(fm$forward$man_w$coefficients)
-  param_f = matrix(0, nrow = fm$no_week, ncol = no_pars) 
+  param_f = data.frame(matrix(0, nrow = fm$no_week, ncol = no_pars) )
   param_b = param_f  
   
   for_coefs = fm$forward$man_w$coefficients
@@ -46,7 +46,7 @@ week_params = function(fm) {
   
   ## Include intercept - 1
   weeks =  c(1, grep("week", rownames(for_coefs)))
-  param_f[weeks[-1]-1, ] = for_coefs[1,] + for_coefs[weeks[-1],]
+  param_f[weeks[-1]-1, ] = for_coefs[1,, drop=FALSE] + for_coefs[weeks[-1],, drop=FALSE]
   param_b[weeks[-1]-1, ] = back_coefs[1,] + back_coefs[weeks[-1],]  
 
   ## Calculate the last parameter from the sum of all the others

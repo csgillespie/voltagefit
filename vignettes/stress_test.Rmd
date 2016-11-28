@@ -29,7 +29,6 @@ datax = sample_forward_curve$VG
 Using these values, we can construct a model curve using any viable parameters we like.
 
 ```{r,fig.width = 7,fig.height = 4}
-
 param = c(-10,-20,1,1)
 simy = curve_4BARO(datax, param);
 sim_curve = data.frame(datax=datax,simy=exp(simy))

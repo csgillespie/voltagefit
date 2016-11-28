@@ -1,4 +1,4 @@
-#Wafer validation and transformation functions.
+# Wafer validation and transformation functions.
 #
 #' @rdname fit_wafer
 #' @export
@@ -62,7 +62,7 @@ add_forward_backward = function(wafer) {
 #' @export
 fit_all = function(path, maxit=10000, verbose=TRUE,plot=FALSE){
   files = list.files(path = path, pattern = ".rds") ## get files to read
-  if(verbose) message("Files found: ", paste(files,collapse=" "))
+  if(verbose) message("Files found: ", paste(files, collapse=" "))
   
   for(i in 1:length(files)){
     wafer = readRDS(file.path(path, files[i])) ## read a file/wafer
@@ -135,7 +135,8 @@ fit_wafer = function(wafer, trans=trans_device, validate=validate_device,
   if(plot){
     noWorkers = getDoParWorkers()
     registerDoParallel(1)
-    par(mfrow=c(4,4))
+    op = par(mfrow=c(4,4))
+    on.exit(par(op))
     if(verbose) message("Plotting is enabled")
   }
   
