@@ -38,7 +38,7 @@ plot.wafer = function(x, y=NULL,  cost=FALSE, ...) {
     axis(1, labels = FALSE, tick = FALSE)
     axis(2)
   } else{
-    par(mfrow=c(2, 3))
+    par(mfrow=c(4,2))
     par_loc = get_par_loc(x)
     for(i in seq_along(par_loc)){
       x_values = as.numeric(factor(x$id))
@@ -65,7 +65,7 @@ hist.wafer = function(x, direction="Forward", cost=FALSE, ...) {
     hist(x$cost, panel.first = grid(), xlab = "Cost", 
          main = direction, col="steelblue", ...)
   } else {
-    par(mfrow = c(2, 3),oma=c(0,0,2,0))
+    par(mfrow = c(4, 2),oma=c(0,0,2,0))
     par_loc = get_par_loc(x)
     for (i in seq_along(par_loc)){
       hist(x[, par_loc[i]], 

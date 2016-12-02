@@ -81,6 +81,7 @@ fit_manova = function(fitted, design){
   l = list(forward = f, backward = b, 
            no_week = length(levels(week)), 
            no_treatment = length(levels(treatment)))
+  attr(l, "dev_curve") = attr(all_wafers, "dev_curve")
   class(l) = "fit_manova"
   return(l)
 }

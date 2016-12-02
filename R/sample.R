@@ -1,7 +1,7 @@
 # Simulate new curves from parameters
 simulate = function(x, n, direction) {
   
-  (samples = mvrnorm(n, as.numeric(coefficients(x$man_w)), x$varcov))
+  (samples = MASS::mvrnorm(n, as.numeric(coefficients(x$man_w)), x$varcov))
   baseline = samples[,grep("Intercept", colnames(samples))]
   week = samples[,grep("week", colnames(samples))]
   treatment = samples[, grep("treatment", colnames(samples))]
@@ -20,7 +20,7 @@ simulate = function(x, n, direction) {
   }
   
   if(ncol(treatment) > 0 ) {
-    treatment = treatment + baseline
+    #treatment = treatment + baseline
     
     dd_tmp = as.data.frame(treatment)
     colnames(dd_tmp) = paste0("X", 1:ncol(dd_tmp))
@@ -31,6 +31,9 @@ simulate = function(x, n, direction) {
   dd$direction = direction
   return(dd)
 }
+
+-1.655 +  -0.1404
+-1.577 + -0.3588
 
 sample_parameters = function(fm, n){
   forward = simulate(fm$forward, n, "Forward")
@@ -71,14 +74,14 @@ sample.fit_manova = function(x, n=100, ...){
   for(sim in unique(pars$sim)) {
     ## Shoe horn parameters back into man format
     par = pars[pars$sim == sim, ]
-    x$forward$man_w$coefficients = par[par$direction=="Forward",1:4]
+    x$forward$man_w$coefficients = par[par$direction=="Forward",par_loc]
     rownames(x$forward$man_w$coefficients) = row_names 
-    x$backward$man_w$coefficients = par[par$direction=="Backward",1:4]
+    x$backward$man_w$coefficients = par[par$direction=="Backward", par_loc]
     rownames(x$backward$man_w$coefficients) = row_names 
     par = get_params(x, TRUE)
 
     for(i in seq_len(nrow(par))) {
-      dd_tmp = get_curve(par[i, par_loc])
+      dd_tmp = get_curve(par[i, par_loc], dev_curve = attr(x, "dev_curve"))
       dd_tmp$type = par$type[i]
       dd_tmp$direction = par$direction[i]
       dd_tmp$sim = sim

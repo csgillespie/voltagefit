@@ -23,7 +23,9 @@ library("voltagefit")
 To enable parallelisation, run
 ```{r eval=FALSE}
 library("doParallel")
-registerDoParallel()
+## This sets the number of cores to use.
+no_of_cores = max(parallel::detectCores() - 1, 1)
+registerDoParallel(no_of_cores)
 ```
 
 ## Example data
@@ -45,19 +47,20 @@ ID | Week
 
 ## A single wafer
 
-We can load a single wafer from the package via
+The package comes with a large number of example data sets. To avoid polluting the
+global name space, we're going to load them into their own environment, `e`
 
 ```{r}
-## This is just a data frame. 
-## I expect the data will come from a database
-wafer_3737 = readRDS(file.path(data_dir, "3737.rds"))
+e = new.env()
+data("voltage", package="voltagefit", envir = e)
+ls(envir = e)
 ```
 To fit the model to a single wafer, we use `fit_wafer`
 ```{r}
-(fit_3737 = fit_wafer(wafer_3737))
+wafer_5210 = fit_wafer(get("wafer5210", envir=e))
 ```
-The object `fit_3737` is a data frame, with `r ncol(fit_3737)` columns and 
-`r nrow(fit_3737)` rows. Each row corresponds to a particular curve on the wafer. The
+The object `fit_5507` is a data frame, with `r ncol(fit_5507)` columns and 
+`r nrow(fit_5507)` rows. Each row corresponds to a particular curve on the wafer. The
 columns are
 
   * `id`: a unique idenfier for the wafer;
@@ -69,9 +72,9 @@ columns are
 
 First load in example data. The data corresponds 
 ```{r, message=FALSE}
-data_dir = file.path(path.package("voltagefit"),"extdata")
-## In real life, pull data from a database
-all_wafers = fit_all(data_dir)
+l = lapply(ls(envir = e), 
+           function(i) fit_wafer(get(i, envir=e)))
+all_wafers = Reduce(rbind, l)
 ```
 You can also view the parameters
 ```{r,fig.width = 8}
@@ -89,8 +92,8 @@ three columns
 
 ```{r}
 wafer = unique(all_wafers$id)
-week = c(1, 1, 1, 1, 2, 2)
-treatment = rep(1, 6)
+week = c(rep(1:2, each=8), 1)
+treatment = rep(1, 17)
 (design = data.frame(wafer = wafer, week = week, treatment = treatment))
 ```
 We then fit a MANOVA model, using the parameter values as the response
@@ -105,14 +108,13 @@ fit_man$forward$man_w
 #summary(fit_man$backward$man_w)
 ```
 
-
 We can now get the mean parameters
 ```{r}
 means = mean(fit_man)
 ```
 and plot them
 ```{r,fig.width = 8}
-library(ggplot2)
+library("ggplot2")
 #colnames(means)[1:2] = c("VG", "ID")
 ggplot(means) + geom_line(aes(VG, ID, colour=type)) + scale_y_log10() + 
   facet_grid(~direction)
@@ -120,12 +122,12 @@ ggplot(means) + geom_line(aes(VG, ID, colour=type)) + scale_y_log10() +
 
 ```{r,fig.width = 8}
 ## Generate a sample of parameters for the underlying curve
-unders = sample(fit_man,  n=10)
+unders = sample(fit_man,  n=20)
 ss = trans_device(unders$samples)
+ss = unders$samples
 ggplot(ss) + 
-  geom_line(aes(VG, ID, group=sim), alpha=0.4) + scale_y_log10() + 
+  geom_line(aes(VG, ID, group=sim), alpha=0.1) + scale_y_log10() + 
   facet_grid(type~direction) +
   geom_line(data=means, aes(VG, ID), colour="steelblue")
-
 ```
 
