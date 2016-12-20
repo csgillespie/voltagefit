@@ -30,7 +30,7 @@ param_manova = function(data, weight, week=TRUE, treatment=TRUE){
     varcov = vcov(lm(data.matrix(data[,grep("X[0-9]+",colnames(data))]) ~ treatment, 
                      data = data, 
                      contrasts = list(treatment = "contr.treatment")))
-    varcov = vcov(man_w)
+    #varcov = vcov(man_w)
   }
   return(list(man_w = man_w, varcov = varcov))
 }
@@ -45,20 +45,8 @@ param_manova = function(data, weight, week=TRUE, treatment=TRUE){
 #' 
 #' @return A list with elements forward and backward, each containing
 #' the MANOVA output incorporating weights and vcov (excluding weights).
-#'
-#' @examples
-#' wafers_folder = file.path(path.package("voltagefit"),"extdata") # path to wafers data directory
-#' fitted = fit_all(wafers_folder)
-#' design = data.frame(week = c(1,1,1,1,2,2), wafer = unique(fitted$id), 
-#'               treatment = rep(1,6))
-#' fitman = fit_manova(fitted, design)
-#'
 #' @export
 fit_manova = function(fitted, design){
-  # op = getOption("contrasts")
-  # options(contrasts = c("contr.sum", "contr.sum")) ## set contrasts to be used in MANOVA
-  # on.exit(options(contrasts = op))
-  
   ## Order data frames to make life easy
   design = design[order(design$wafer),]
   fitted = fitted[order(fitted$id),]
@@ -81,7 +69,7 @@ fit_manova = function(fitted, design){
   l = list(forward = f, backward = b, 
            no_week = length(levels(week)), 
            no_treatment = length(levels(treatment)))
-  attr(l, "dev_curve") = attr(all_wafers, "dev_curve")
+  attr(l, "dev_curve") = attr(fitted, "dev_curve")
   class(l) = "fit_manova"
   return(l)
 }

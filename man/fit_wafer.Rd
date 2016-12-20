@@ -16,7 +16,7 @@ trans_filter_device(wafer, validate = validate_device, trans = trans_device,
 
 fit_wafer(wafer, trans = trans_device, validate = validate_device,
   cost_func = area_between_curves, dev_curve = curve_piecewise,
-  initparams = NULL, maxit = 10000, verbose = TRUE, plot = FALSE)
+  initparams = NULL, maxit = 1e+05, verbose = TRUE, plot = FALSE)
 }
 \arguments{
 \item{wafer}{Data from a single wafer}
@@ -53,7 +53,8 @@ cost for both forward and backwards curves. Wafers can be validated and
 transformed before fitting. Devices are fitted in parallel automatically.
 }
 \examples{
-fit_wafer(wafer3737)
+data(voltage, package="voltagefit")
+fit_wafer(wafer6138)
 
 }
 

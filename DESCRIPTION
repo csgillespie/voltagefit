@@ -12,7 +12,8 @@ Imports:
     stringi (>= 1.1.1),
     foreach,
     doParallel,
-    ggplot2
+    ggplot2, 
+    minqa
 Suggests: knitr, rmarkdown
 License: GPL-2 | GPL-3
 Encoding: UTF-8

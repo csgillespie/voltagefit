@@ -64,7 +64,7 @@ treatment_params = function(fm) {
   param_b = back_coefs[trt_rows,]
   params = as.data.frame(rbind(param_f, param_b))
   rownames(params) = NULL
-  params$type = dimnames(for_coefs)[[1]][-1]
+  params$type = dimnames(for_coefs)[[1]][trt_rows]
   params$direction = rep(c("Forward", "Backward"), each=length(trt_rows))
   params
 }

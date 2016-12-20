@@ -56,53 +56,6 @@ add_forward_backward = function(wafer) {
   return(dd)
 }
 
-
-#' Fit curves to multiple wafers
-#'
-#' Fits curves to multiple wafers in a directory, using \code{\link{fit_wafer}}, 
-#' returning the parameters and cost for both forward and backwards curves.
-#'
-#' @inheritParams  fit_wafer
-#' @param path     Directory containing multiple .rds files, each containing a single wafer
-#' 
-#' @return A data.frame consisting of the fields:
-#'   \describe{
-#'      \item{id}{Wafer ID}
-#'      \item{name}{Each device on the wafer}
-#'      \item{max}{Maximum of \code{log(abs(ID))}, where \code{ID} is the current drain data taken from \code{wafer}}
-#'      \item{cost}{The value of the cost function for each device}
-#'      \item{direction}{Whether the curve direction is forward or backward}
-#'      \item{X1 ... X6}{The parameters characterising the curve}
-#'   }
-#'   The attribute v (voltage gate readings for one device), used in curve
-#'   functions and plotting functions, is also appended.
-#'
-#' @examples
-#' wafers_folder = file.path(path.package("voltagefit"),"extdata") # path to wafers data directory
-#' fit = fit_all(wafers_folder)
-#'
-#' @export
-fit_all = function(path, dev_curve=curve_piecewise, maxit=10000, verbose=TRUE){
-  files = list.files(path = path, pattern = "[0-9]+.rds") ## get files to read
-  if(verbose) message("Files found: ", paste(files,collapse=" "))
-  
-  for(i in 1:length(files)){
-    wafer = readRDS(file.path(path, files[i])) ## read a file/wafer
-    if(verbose) message("Reading: ", files[i])
-    fit = fit_wafer(wafer, maxit=maxit,dev_curve = dev_curve, verbose=verbose) ## fit model to that wafer
-    
-    if(i==1){
-      param = fit
-      v = wafer[wafer$name==unique(wafer$name)[1],]$VG ## get v_gate reading, used in later functions and plotting
-    } else {
-      param = rbind(param, fit)
-    }
-  }
-  attr(param,"v") = v
-  return(param)
-}
-
-
 #' Fit curves to a wafer
 #'
 #' Fits curves to a wafer and returns the curve parameters and resulting
@@ -129,7 +82,8 @@ fit_all = function(path, dev_curve=curve_piecewise, maxit=10000, verbose=TRUE){
 #'   }
 #'
 #' @examples
-#' fit_wafer(wafer3737)
+#' data(voltage, package="voltagefit")
+#' fit_wafer(wafer6138)
 #'
 #' @importFrom stringi stri_rand_strings
 #' @importFrom stats lm manova vcov approx
@@ -138,47 +92,50 @@ fit_all = function(path, dev_curve=curve_piecewise, maxit=10000, verbose=TRUE){
 #' @importFrom graphics axis title
 #' @importFrom foreach foreach %dopar% getDoParWorkers
 #' @importFrom doParallel registerDoParallel
+#' @importFrom minqa bobyqa
 #' 
 #' @export
 fit_wafer = function(wafer, trans=trans_device, validate=validate_device,
                      cost_func=area_between_curves, dev_curve=curve_piecewise,
-                     initparams = NULL, maxit=10000, verbose=TRUE,plot=FALSE){
+                     initparams = NULL, maxit=1e5, verbose=TRUE,plot=FALSE){
   wafer = add_forward_backward(wafer)
   wafer = trans_filter_device(wafer,validate,trans,verbose)
   uqnames = unique(wafer$name)
   
   #Default or user supplied initial parameters?
-  if(is.null(initparams)) initparams = attr(dev_curve,"initparams")
-  psc = rep(1,length(initparams))
-  if(!is.null(attr(dev_curve,"parscale"))) psc = attr(dev_curve,"parscale")
-  npars = length(initparams);
+  if(is.null(initparams)) initparams = attr(dev_curve, "initparams")
+  psc = rep(1, length(initparams))
+  if(!is.null(attr(dev_curve, "parscale"))) psc = attr(dev_curve, "parscale")
+  npars = length(initparams)
   
   #do the main fitting
-  i = 0
-  if(verbose) message(paste("Executing on ",getDoParWorkers()," workers.",sep=" "))
-  estall<-foreach(i=1:length(uqnames),.combine=rbind) %dopar% {
+  i = 1
+  if(verbose) message(paste("Executing on", getDoParWorkers(), "workers."))
+  estall <- foreach(i=1:length(uqnames),.combine=rbind) %dopar% {
     d = wafer[wafer$name==uqnames[i],]
     #forward
     d_forward = d[d$direction == "Forward",]
     datax = d_forward$VG
     datay = log(d_forward$ID)
-    est = optim(initparams, cost_func, device_model=dev_curve, 
-                upper = attr(dev_curve,"for_upper"),
-                lower = attr(dev_curve,"for_lower"),
-                datax=datax, datay=datay, control=list(maxit=maxit,parscale=psc),method="L-BFGS-B")
+    
+    (est = bobyqa(initparams, cost_func, device_model=dev_curve, 
+                  upper = attr(dev_curve,"for_upper"),
+                  lower = attr(dev_curve,"for_lower"),
+                  datax=datax, datay=datay, control = list(maxfun=maxit, rhobeg=0.1)))
+    
     cur_forward_pars = est$par
-    cur_forward_value = est$value
+    cur_forward_value = est$fval
     #backward
     d_backward = d[d$direction == "Backward",]
     datax = d_backward$VG
     datay= log(d_backward$ID)
-    est = optim(attr(dev_curve,"back_upper"), cost_func, device_model=dev_curve, 
-                datax=datax, datay=datay, 
-                upper = attr(dev_curve,"back_upper"),
-                lower = attr(dev_curve,"back_lower"),
-                control=list(maxit=maxit,parscale=psc),method="L-BFGS-B")
+    est = bobyqa(attr(dev_curve,"back_upper"), cost_func, device_model=dev_curve, 
+                 datax=datax, datay=datay, 
+                 upper = attr(dev_curve,"back_upper"),
+                 lower = attr(dev_curve,"back_lower"),
+                 control = list(maxfun=maxit, rhobeg=0.1))
     cur_backward_pars = est$par
-    cur_backward_value = est$value
+    cur_backward_value = est$fval
     
     #this line looks like it's not doing anything, but it is
     #returning rows to the parallel backend which are then rbind and returned
@@ -202,8 +159,12 @@ fit_wafer = function(wafer, trans=trans_device, validate=validate_device,
   }
   
   #Build results data.frame
-  for_params  = apply(estall[, 1:npars, drop=FALSE], 2, weighted.mean, 1/estall[,npars+1], na.rm=TRUE)
-  back_params = apply(estall[, (npars+2):(2*npars+1), drop=FALSE], 2, weighted.mean, 1/estall[,2*npars+2], na.rm=TRUE)
+  for_params  = apply(estall[, 1:npars, drop=FALSE], 2, 
+                      weighted.mean, 
+                      1/estall[,npars+1, drop=FALSE], na.rm=TRUE)
+  back_params = apply(estall[, (npars+2):(2*npars+1), drop=FALSE], 2, 
+                      weighted.mean, 
+                      1/estall[,2*npars+2, drop=FALSE], na.rm=TRUE)
   
   results = data.frame(rbind(for_params, back_params), 
                        cost = c(mean(estall[,npars+1]), mean(estall[,2*npars+2])),

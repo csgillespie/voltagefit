@@ -25,6 +25,8 @@
 \alias{wafer6189}
 \alias{wafer6190}
 \alias{wafer6198}
+\alias{wafer6299}
+\alias{wafer6301}
 \title{Voltage results from a single wafer}
 \format{A data frame consisting of the fields:
   \itemize{             

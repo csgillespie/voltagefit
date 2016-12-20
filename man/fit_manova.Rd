@@ -19,12 +19,4 @@ the MANOVA output incorporating weights and vcov (excluding weights).
 Performs a MANOVA analysis using curves that have been fitted
 to wafers, using \code{\link{fit_wafer}}.
 }
-\examples{
-wafers_folder = file.path(path.package("voltagefit"),"extdata") # path to wafers data directory
-fitted = fit_all(wafers_folder)
-design = data.frame(week = c(1,1,1,1,2,2), wafer = unique(fitted$id), 
-              treatment = rep(1,6))
-fitman = fit_manova(fitted, design)
-
-}
 
