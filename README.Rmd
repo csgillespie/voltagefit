@@ -13,9 +13,19 @@ knitr::opts_chunk$set(
 
 [![Travis-CI Build Status](https://travis-ci.org/csgillespie/voltagefit.svg?branch=master)](https://travis-ci.org/csgillespie/voltagefit)
 
-Experimental package for fitting voltage curves. Authors:
-  
-  * Gavin Whitaker
-  * Colin Gillespie
-  * Andrew Golightly
-  * George Stagg
+Experimental package for fitting voltage curves. To install from GitHub, run 
+
+```{r eval=FALSE}
+devtools::install_github("csgillespie/voltagefit")
+```
+
+The package can then be loaded in the usual way
+
+```{r, message=FALSE}
+library("voltagefit")
+```
+To get started, see the associated vignette
+```{r}
+vignette("getting_started", package="voltagefit")
+```
+
