@@ -16,7 +16,7 @@ knitr::opts_chunk$set(
 Experimental package for fitting voltage curves. To install from GitHub, run 
 
 ```{r eval=FALSE}
-devtools::install_github("csgillespie/voltagefit")
+devtools::install_github("csgillespie/voltagefit", build_vignettes=TRUE)
 ```
 
 The package can then be loaded in the usual way

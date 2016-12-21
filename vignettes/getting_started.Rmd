@@ -17,7 +17,7 @@ theme_set(theme_bw())
 The package lives on [github](https://github.com/csgillespie/voltagefit/) and can be installed using
 
 ```{r eval=FALSE}
-devtools::install_github("csgillespie/voltagefit")
+devtools::install_github("csgillespie/voltagefit", build_vignettes=TRUE)
 ```
 and loaded in the usual way
 ```{r, message=FALSE}
