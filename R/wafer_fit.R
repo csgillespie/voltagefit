@@ -83,7 +83,9 @@ add_forward_backward = function(wafer) {
 #'
 #' @examples
 #' data(voltage, package="voltagefit")
+#' \dontrun{
 #' fit_wafer(wafer6138)
+#' }
 #'
 #' @importFrom stringi stri_rand_strings
 #' @importFrom stats lm manova vcov approx

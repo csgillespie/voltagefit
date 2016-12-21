@@ -13,13 +13,21 @@ curve_diff = function(x, type, direction="Forward") {
   }
 }
 
-#' @inheritParams mean.fit_manova
+
+#' Curve differences
+#' 
+#' Generate difference between two treatment/week effects. 
+#' @param x    Data.frame as output by \code{\link{fit_manova}}.
+#' @param type A vector of length two containing the comparision
+#' @param direction Forward or Backward. 
 #' @export
 curve_diff_mean = function(x, type, direction="Forward") {
   means = mean(x)  
   curve_diff(means, type, direction)
 }
 
+#' @param n a positive integer; the number of samples to generate.
+#' @rdname curve_diff_mean
 #' @export
 curve_diff_sample = function(x, type, n, direction="Forward") {
   unders = sample(x,  n=n)$samples

@@ -54,7 +54,9 @@ transformed before fitting. Devices are fitted in parallel automatically.
 }
 \examples{
 data(voltage, package="voltagefit")
+\dontrun{
 fit_wafer(wafer6138)
+}
 
 }
 
