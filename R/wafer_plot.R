@@ -1,3 +1,4 @@
+globalVariables(c("ID", "VG", "name"))
 #' Plot fitted voltage curve and wafer curves
 #'
 #' Plot fitted voltage curve and the wafer curves the fit was 
@@ -17,7 +18,7 @@ plot_fit = function(x, plotit = TRUE) {
   ## Terrible code. Redo
   dd = NULL
   for(i in 1:nrow(x)) {
-    dd_tmp = voltagefit:::get_curve(x[i, par_loc], dev_curve = attr(x, "dev_curve"))
+    dd_tmp = get_curve(x[i, par_loc], dev_curve = attr(x, "dev_curve"))
     dd_tmp$id = x[i, "id"]
     dd_tmp$direction = x[i,"direction"]
     dd = rbind(dd, dd_tmp)
