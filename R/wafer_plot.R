@@ -6,7 +6,7 @@
 #' @param x fitted wafer data as from \code{fit_wafer}.
 #' @param plotit Default \code{TRUE}. 
 #' 
-#' @importFrom ggplot2 aes geom_line ggplot scale_y_log10 labs
+#' @importFrom ggplot2 aes geom_line ggplot scale_y_log10 labs facet_wrap
 #' @export
 plot_fit = function(x, plotit = TRUE) {
   wafer = attr(x,"wafer_back_forward")
