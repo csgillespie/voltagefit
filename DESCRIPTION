@@ -1,6 +1,6 @@
 Package: voltagefit
 Title: Voltage Curve Fitting
-Version: 0.1.0
+Version: 0.1.1
 Authors@R: c(person("Colin", "Gillespie", email = "csgillespie.gmail.com", role = c("aut")),
   person("Gavin", "Whitaker", email = "g.a.whitaker@newcastle.ac.uk", role = c("aut", "cre")),
   person("George", "Stagg", email = "george.stagg@newcastle.ac.uk", role = c("aut")))
