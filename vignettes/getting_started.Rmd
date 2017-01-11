@@ -17,7 +17,7 @@ theme_set(theme_bw())
 The package lives on [github](https://github.com/csgillespie/voltagefit/) and can be installed using
 
 ```{r eval=FALSE}
-devtools::install_github("csgillespie/voltagefit", build_vignettes=TRUE)
+devtools::install_github("csgillespie/voltagefit", build_vignettes = TRUE)
 ```
 and loaded in the usual way
 ```{r, message=FALSE}
@@ -51,11 +51,11 @@ The key columns are `wafer_id`, `id`, `ID` and `VG`.
 
 To fit the model to a single wafer, use the `fit_wafer()` function
 ```{r, echo=1, eval=FALSE}
-wafer_5210 = fit_wafer(get("wafer5210", envir=e))
-saveRDS(wafer_5210, file="wafer_5210.Rds")
+wafer_5210 = fit_wafer(get("wafer5210", envir = e))
+saveRDS(wafer_5210, file = "wafer_5210.Rds")
 ```
 ```{r echo=FALSE}
-wafer_5210 = readRDS(file="wafer_5210.Rds")
+wafer_5210 = readRDS(file = "wafer_5210.Rds")
 ```
 The object `wafer_5210` is a data frame, with `r ncol(wafer_5210)` columns and 
 `r nrow(wafer_5210)` rows. The columns are:
@@ -75,7 +75,7 @@ all_wafers = Reduce(rbind, l)
 saveRDS(all_wafers, file="all_wafers.Rds")
 ```
 ```{r echo=FALSE}
-all_wafers = readRDS(file="all_wafers.Rds")
+all_wafers = readRDS(file="vignettes/all_wafers.Rds")
 ```
 You can also view the parameters
 ```{r,fig.width = 8}
@@ -142,10 +142,10 @@ ggplot(curve_d, aes(VG, diff)) +
 Similarly, with uncertainity
 ```{r}
 #treatment2 - baseline
-curve_d = curve_diff_sample(fit_man, type=c("baseline", "treatment2"), n = 100,  
-                          direction="Forward")
+curve_d = curve_diff_sample(fit_man, type=c("baseline", "treatment2"), n = 40,  
+                          direction = "Forward")
 ggplot(curve_d, aes(VG, diff)) + 
-  geom_line(aes(group=sim), alpha=0.05) + 
+  geom_line(aes(group = sim), alpha=0.05) + 
   stat_smooth()
 ```
 
