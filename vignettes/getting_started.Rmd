@@ -40,7 +40,7 @@ global name space, we're going to load them into their own environment, `e`
 
 ```{r}
 e = new.env()
-data("voltage", package="voltagefit", envir = e)
+data("voltage", package = "voltagefit", envir = e)
 ls(envir = e)
 ```
 The wafer object is just a data frame
@@ -75,7 +75,7 @@ all_wafers = Reduce(rbind, l)
 saveRDS(all_wafers, file="all_wafers.Rds")
 ```
 ```{r echo=FALSE}
-all_wafers = readRDS(file="vignettes/all_wafers.Rds")
+all_wafers = readRDS(file="all_wafers.Rds")
 ```
 You can also view the parameters
 ```{r,fig.width = 8}
