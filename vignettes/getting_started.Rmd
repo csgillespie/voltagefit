@@ -65,6 +65,12 @@ The object `wafer_5210` is a data frame, with `r ncol(wafer_5210)` columns and
   * `direction`: `Forward` or `Backward`
   * `X1`, ...: Parameters relating to the model.
 
+We can plot the model fit via
+
+```{r, results="hide"}
+plot_fit(wafer_5210)
+```
+
 ## Multiple wafers
 
 First load in example data. The data corresponds 
