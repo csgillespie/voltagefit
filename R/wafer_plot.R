@@ -5,10 +5,11 @@
 #' 
 #' @param x fitted wafer data as from \code{fit_wafer}.
 #' @param dir Direction of voltage curve.
+#' @param plotit Default \code{code}. 
 #' 
 #' @importFrom ggplot2 aes geom_line ggplot scale_y_log10 labs
 #' @export
-plot_curves = function(x,dir="Forward") {
+plot_curves = function(x,dir="Forward", plotit=TRUE) {
   wafer = attr(x,"wafer_back_forward")
   curve = attr(x,"dev_curve")
   ID = VG = direction = name = NULL
@@ -16,10 +17,14 @@ plot_curves = function(x,dir="Forward") {
   xv = seq(-8, 8, length.out=1000)
   param = unlist(x[1, 1:(ncol(x)-3)])
   wafer = trans_device(wafer)
+  if(plotit) {
   g = ggplot(subset(wafer, direction==dir)) + geom_line(aes(VG, abs(ID), group=name), alpha=0.1) + 
     scale_y_log10() + labs(title =paste("wafer",wafer$wafer_id[1]," - ",dir,sep=""))
   g + geom_line(data=trans_device(data.frame(VG=xv, ID = exp(curve(xv, param )))), 
                 aes(VG, ID), col="red2")
+  } else {
+    subset(wafer, direction==dir)
+  }
 }
 
 #' @export

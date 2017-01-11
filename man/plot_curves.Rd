@@ -4,12 +4,14 @@
 \alias{plot_curves}
 \title{Plot fitted voltage curve and wafer curves}
 \usage{
-plot_curves(x, dir = "Forward")
+plot_curves(x, dir = "Forward", plotit = TRUE)
 }
 \arguments{
 \item{x}{fitted wafer data as from \code{fit_wafer}.}
 
 \item{dir}{Direction of voltage curve.}
+
+\item{plotit}{Default \code{code}.}
 }
 \description{
 Plot fitted voltage curve and the wafer curves the fit was 
