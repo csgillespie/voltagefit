@@ -37,7 +37,7 @@ week_params = function(fm) {
   
   ## Include intercept - 1
   weeks =  c(1, grep("week", rownames(for_coefs)))
-  param_f[weeks[-1]-1, ] = for_coefs[1,, drop=FALSE] + for_coefs[weeks[-1],, drop=FALSE]
+  param_f[weeks[-1]-1, ] = t(for_coefs[1,] + t(for_coefs[weeks[-1],, drop=FALSE]))
   param_b[weeks[-1]-1, ] = back_coefs[1,] + back_coefs[weeks[-1],]  
 
   ## Calculate the last parameter from the sum of all the others
