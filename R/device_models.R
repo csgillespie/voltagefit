@@ -177,6 +177,6 @@ attr(curve_piecewise,"initparams") <- c(-1.5, -25, -8.45,  -14, -0.175, -1,    0
 attr(curve_piecewise,"for_upper") <- c(-1, -20,     -1,  -1,      0,    0,    0.5,    1)
 attr(curve_piecewise,"for_lower") <- c(-3, -30,    -10, -20,     -1,   -5,   -1,   0)
 attr(curve_piecewise,"back_upper") <- c(-100  , -20,     -1,  -1,      0,    0,    0.5,    1)
-attr(curve_piecewise,"back_lower") <- c(-100.1, -30,    -10, -20,     -1,   -5,   -1,   0)
+attr(curve_piecewise,"back_lower") <- c(-101, -30,    -10, -20,     -1,   -5,   -1,   0)
 attr(curve_piecewise,"name") <- "curve_piecewise"
 attr(curve_piecewise,"parscale") <- c(1,30,8,8,1,1,0.2,0.2)

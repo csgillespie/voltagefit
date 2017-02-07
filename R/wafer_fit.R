@@ -106,9 +106,12 @@ fit_wafer = function(wafer, trans=trans_device, validate=validate_device,
   
   #Default or user supplied initial parameters?
   if(is.null(initparams)) initparams = attr(dev_curve, "initparams")
-  psc = rep(1, length(initparams))
-  if(!is.null(attr(dev_curve, "parscale"))) psc = attr(dev_curve, "parscale")
+  #psc = rep(1, length(initparams))
+  #if(!is.null(attr(dev_curve, "parscale"))) psc = attr(dev_curve, "parscale")
   npars = length(initparams)
+  
+  pars_f = initparams
+  pars_b = c(-100, -23, -9, -9, -1, -1, 0.5, 0.06)
   
   #do the main fitting
   i = 1
@@ -120,24 +123,27 @@ fit_wafer = function(wafer, trans=trans_device, validate=validate_device,
     datax = d_forward$VG
     datay = log(d_forward$ID)
     
-    (est = bobyqa(initparams, cost_func, device_model=dev_curve, 
+    (est_f = minqa::bobyqa(pars_f, cost_func, device_model=dev_curve, 
                   upper = attr(dev_curve,"for_upper"),
                   lower = attr(dev_curve,"for_lower"),
                   datax=datax, datay=datay, control = list(maxfun=maxit, rhobeg=0.1)))
     
-    cur_forward_pars = est$par
-    cur_forward_value = est$fval
+    if(est_f$ierr == 0) pars_f = est_f$par
+    
+    cur_forward_pars = est_f$par
+    cur_forward_value = est_f$fval
     #backward
     d_backward = d[d$direction == "Backward",]
     datax = d_backward$VG
     datay= log(d_backward$ID)
-    est = bobyqa(attr(dev_curve,"back_upper"), cost_func, device_model=dev_curve, 
+    est_b = minqa::bobyqa(pars_b, cost_func, device_model=dev_curve, 
                  datax=datax, datay=datay, 
                  upper = attr(dev_curve,"back_upper"),
                  lower = attr(dev_curve,"back_lower"),
                  control = list(maxfun=maxit, rhobeg=0.1))
-    cur_backward_pars = est$par
-    cur_backward_value = est$fval
+    if(est_b$ierr == 0) pars_b = est_b$par
+    cur_backward_pars = est_b$par
+    cur_backward_value = est_b$fval
     
     #this line looks like it's not doing anything, but it is
     #returning rows to the parallel backend which are then rbind and returned
