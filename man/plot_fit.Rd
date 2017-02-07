@@ -15,4 +15,3 @@ plot_fit(x, plotit = TRUE)
 Plot fitted voltage curve and the wafer curves the fit was 
 generated with.
 }
-

@@ -27,4 +27,3 @@ respect to each parameter can also be calculated.
 NOTE: Here the data is shifted >> 0 in x, as the raw curve is not designed 
 to handle x values of less than zero.
 }
-

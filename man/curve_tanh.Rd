@@ -25,4 +25,3 @@ the given parameters, over the provided range of x values.
 Model voltage curve based on a tanh sigmoidal shape. The first derivatives with 
 respect to each parameter can also be calculated.
 }
-

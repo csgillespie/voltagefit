@@ -23,4 +23,3 @@ values given Interpolation is used to create evenly spaced points as the input
 datax values may have a varying density of points thoughtout. The first derivatives 
 with respect to each parameter can also be calculated.
 }
-

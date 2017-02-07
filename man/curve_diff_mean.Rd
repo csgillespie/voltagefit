@@ -21,4 +21,3 @@ curve_diff_sample(x, type, n, direction = "Forward")
 \description{
 Generate difference between two treatment/week effects.
 }
-

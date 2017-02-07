@@ -26,4 +26,3 @@ the given parameters, over the provided range of x values.
 Model voltage curve based on the 4BARO model. The first derivatives with 
 respect to each parameter can also be calculated.
 }
-

@@ -24,4 +24,3 @@ A data.frame consisting of the fields:
 \description{
 Generate sample forward and backward underlying curves.
 }
-

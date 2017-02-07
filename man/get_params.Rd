@@ -23,4 +23,3 @@ A data.frame consisting of the fields:
 Calculate the parameters characterising both the forward and backward curves for
 each week present in a fitted manova, provided by \code{\link{fit_manova}}.
 }
-

@@ -19,4 +19,3 @@ the MANOVA output incorporating weights and vcov (excluding weights).
 Performs a MANOVA analysis using curves that have been fitted
 to wafers, using \code{\link{fit_wafer}}.
 }
-

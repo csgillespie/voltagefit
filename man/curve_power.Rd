@@ -20,4 +20,3 @@ Model voltage curve based on a power fit. Two pmax are used. pmax(0,x)
 removes the -ve x part of the curve. pmax(log(1e-13),v) is used to cap 
 the minimum value to log(1e-13).
 }
-

@@ -18,4 +18,3 @@ the given parameters, over the provided range of x values.
 \description{
 Model voltage curve based on a piecewise constant, quadratic then power fit.
 }
-

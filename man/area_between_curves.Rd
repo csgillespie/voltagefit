@@ -22,4 +22,3 @@ The cost defined by this function is based on the total area between the curves 
 by linear interpolation on the model curve and true values, interpolated between the datax 
 points given. The first derivatives with respect to each parameter can also be calculated.
 }
-

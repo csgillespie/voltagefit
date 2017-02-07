@@ -13,4 +13,3 @@ add_forward_backward(wafer)
 Adds a new column called `direction` indicating if the row relates
 to forward or backward.
 }
-
