@@ -63,7 +63,7 @@ add_forward_backward = function(wafer) {
 #' transformed before fitting. Devices are fitted in parallel automatically.
 #'
 #' @param wafer       Data from a single wafer
-#' @param trans       (Optional) Wafer ransform function
+#' @param trans       (Optional) Wafer transform function
 #' @param validate    (Optional) Wafer validate function
 #' @param cost_func   (Optional) Cost function
 #' @param dev_curve   (Optional) Model device voltage curve

@@ -1,4 +1,4 @@
-get_curve = function(pars, dev_curve, x = seq(-4, 4, length.out=1000)) {
+get_curve = function(pars, dev_curve, x = seq(-4, 6, length.out=1000)) {
   pars = as.numeric(pars)
   y = dev_curve(x, pars)
   data.frame(VG = x, ID = exp(y), stringsAsFactors = FALSE)
