@@ -15,14 +15,14 @@ validate_device = function(wafer) {
   ID = waferf[waferf$VG < -4, "ID"]
   if(any(ID > 1e-10)) return(FALSE)
   
-  ID = waferf[waferf$VG > 6, "ID"]
+  ID = waferf[waferf$VG > 4, "ID"]
   if(any(ID < 1e-5)) return(FALSE)
   
   waferb = wafer[wafer$direction == "Backward", ]
   ID = waferb[waferb$VG < -4, "ID"]
   if(any(ID > 1e-10)) return(FALSE)
   
-  ID = waferb[waferb$VG > 6, "ID"]
+  ID = waferb[waferb$VG > 4, "ID"]
   if(any(ID < 1e-5)) return(FALSE)
   return(TRUE)
 }
